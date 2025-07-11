@@ -1,28 +1,187 @@
+<%# 
+APPLICATION LAYOUT - The master template that wraps all pages in our Rails application
+
+RAILS CONCEPT: This layout file is automatically used by all controllers unless 
+specified otherwise. Every view template gets inserted where <%= yield %> appears.
+
+LAYOUT INHERITANCE: All pages share this common structure for:
+- HTML document structure and metadata
+- Site-wide navigation and branding  
+- CSS and JavaScript includes
+- Flash message display
+- Footer and consistent page elements
+
+WHY LAYOUTS MATTER:
+- DRY principle - write once, use everywhere
+- Consistent user experience across all pages
+- Central place for site-wide changes
+- SEO and accessibility standards
+%>
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Rails 8 Tutorial 2" %></title>
+    <%# DYNAMIC TITLE: Allows pages to set custom titles while providing fallback %>
+    <title><%= content_for(:title) || "Rails 8 Tutorial Blog - Learn Modern Rails Development" %></title>
+    
+    <%# RESPONSIVE META TAGS: Essential for mobile-friendly design %>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    
+    <%# RAILS SECURITY: CSRF protection and Content Security Policy %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <%# SEO AND SOCIAL META: Allows pages to add custom head content %>
+    <meta name="description" content="<%= content_for(:description) || 'A comprehensive Rails 8 tutorial application demonstrating modern web development with Ruby on Rails' %>">
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%# PWA SUPPORT: Progressive Web App capabilities (disabled for now) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
+    <%# FAVICON AND ICONS: Site branding elements %>
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%# RAILS ASSET PIPELINE: Includes all stylesheets and JavaScript %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= yield %>
+    <%# SITE HEADER WITH NAVIGATION %>
+    <header class="site-header">
+      <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-container">
+          <%# SITE LOGO/BRAND: Links to home page %>
+          <div class="navbar-brand">
+            <%= link_to root_path, class: "brand-link" do %>
+              <h1>Rails 8 Tutorial Blog</h1>
+            <% end %>
+          </div>
+
+          <%# MAIN NAVIGATION MENU %>
+          <div class="navbar-menu">
+            <div class="navbar-nav">
+              <%# HOME LINK: Always available %>
+              <%= link_to "Home", root_path, 
+                  class: "nav-link #{'active' if current_page?(root_path)}" %>
+              
+              <%# BLOG LINK: Now active with blog controller foundation %>
+              <%= link_to "Blog", blog_path, 
+                  class: "nav-link #{'active' if current_page?(blog_path) || current_page?(controller: 'blog')}" %>
+              
+              <%# ADMIN LINK: Will be activated in Phase 4 when admin panel exists %>
+              <%# TODO Phase 4: Replace with admin_dashboard_path when admin system is built %>
+              <a href="#" class="nav-link disabled" title="Coming in Phase 4">
+                Admin <span class="coming-soon">(Coming Soon)</span>
+              </a>
+              
+              <%# EXTERNAL LINK: GitHub repository %>
+              <%= link_to "Source Code", "https://github.com/h1n054ur/rails-8-blog-tutorial", 
+                  class: "nav-link external", target: "_blank", rel: "noopener" %>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <%# FLASH MESSAGES: User feedback for actions (success, error, notice) %>
+    <% if notice %>
+      <div class="flash flash-notice" role="alert">
+        <%= notice %>
+        <button type="button" class="flash-close" aria-label="Close">&times;</button>
+      </div>
+    <% end %>
+    
+    <% if alert %>
+      <div class="flash flash-alert" role="alert">
+        <%= alert %>
+        <button type="button" class="flash-close" aria-label="Close">&times;</button>
+      </div>
+    <% end %>
+
+    <%# MAIN CONTENT AREA: Where individual page content gets inserted %>
+    <main id="main-content" role="main">
+      <%= yield %>
+    </main>
+
+    <%# SITE FOOTER %>
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>Rails 8 Tutorial Blog</h3>
+            <p>A comprehensive learning resource for modern Rails development.</p>
+          </div>
+          
+          <div class="footer-section">
+            <h4>Learning Resources</h4>
+            <ul>
+              <li><a href="https://github.com/h1n054ur/rails-8-blog-tutorial" target="_blank">Source Code</a></li>
+              <li><a href="https://guides.rubyonrails.org/" target="_blank">Rails Guides</a></li>
+              <li><a href="https://rubyonrails.org/" target="_blank">Ruby on Rails</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-section">
+            <h4>Tutorial Progress</h4>
+            <p>
+              ✅ Phase 1: Documentation Framework<br>
+              🚧 Phase 2: Public Interface (In Progress)<br>
+              ⏳ Phase 3: Blog System<br>
+              ⏳ Phase 4: Admin Panel<br>
+              ⏳ Phase 5: Deployment
+            </p>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; <%= Date.current.year %> Rails 8 Tutorial Blog - Built with ❤️ and Rails 8</p>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
+
+<%# 
+RAILS CONCEPTS DEMONSTRATED IN THIS LAYOUT:
+
+1. CONTENT_FOR HELPER:
+   - content_for(:title) allows pages to set custom titles
+   - yield :head allows pages to add custom head content
+   - Provides flexibility while maintaining consistency
+
+2. RAILS LINK HELPERS:
+   - link_to generates anchor tags with Rails path helpers
+   - root_path helper automatically generates correct URL
+   - current_page? helper detects active navigation items
+
+3. FLASH MESSAGES:
+   - notice and alert are Rails conventions for user feedback
+   - Automatically available in all views
+   - Used by controllers to communicate action results
+
+4. SEMANTIC HTML:
+   - Proper use of header, nav, main, footer elements
+   - ARIA labels for accessibility
+   - Role attributes for screen readers
+
+5. RAILS ASSET PIPELINE:
+   - stylesheet_link_tag includes CSS with cache busting
+   - javascript_importmap_tags handles JavaScript modules
+   - data-turbo-track enables Turbo cache management
+
+6. PROGRESSIVE ENHANCEMENT:
+   - Works without JavaScript
+   - Enhanced with Turbo for SPA-like experience
+   - Mobile-responsive meta tags
+
+FUTURE ENHANCEMENTS (will be added in later phases):
+- User authentication status in navigation
+- Dynamic menu based on user permissions
+- Search functionality
+- Breadcrumb navigation
+- Theme switching capability
+%>

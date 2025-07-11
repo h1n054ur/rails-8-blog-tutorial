@@ -1,0 +1,183 @@
+<%# 
+BLOG SHOW VIEW - Individual blog post display template
+
+RAILS CONCEPT: This view renders when BlogController's show action completes.
+The URL pattern /blog/:id routes here, with the ID available as params[:id].
+
+FILE NAMING: blog/show.html.erb matches BlogController#show action
+
+PHASE 2 SCOPE: Placeholder demonstrating individual post structure for Phase 3
+%>
+
+<%# SET CUSTOM PAGE TITLE %>
+<% content_for(:title, "Blog Post #{@post_id} - Rails 8 Tutorial") %>
+
+<div class="blog-show">
+  <%# BREADCRUMB NAVIGATION %>
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <%= link_to "Home", root_path %>
+    <span class="separator">→</span>
+    <%= link_to "Blog", blog_path %>
+    <span class="separator">→</span>
+    <span class="current">Post <%= @post_id %></span>
+  </nav>
+
+  <%# MAIN POST CONTENT AREA %>
+  <main class="post-content">
+    <%# PHASE 2 PLACEHOLDER: Demonstrates structure for future database content %>
+    <article class="blog-post placeholder">
+      <header class="post-header">
+        <h1>Sample Blog Post #<%= @post_id %></h1>
+        <div class="post-meta">
+          <time datetime="2025-01-01">January 1, 2025</time>
+          <span class="author">by Tutorial Author</span>
+          <span class="reading-time">5 min read</span>
+        </div>
+      </header>
+
+      <div class="post-body">
+        <div class="placeholder-notice">
+          <h2>🚧 Post Content Coming in Phase 3!</h2>
+          <p>
+            You've reached the individual blog post view for post ID <strong><%= @post_id %></strong>.
+            This demonstrates the URL structure and routing that will be used for actual blog posts.
+          </p>
+        </div>
+
+        <div class="phase-3-preview">
+          <h3>What This Page Will Include in Phase 3:</h3>
+          <ul>
+            <li><strong>Dynamic Content:</strong> Real blog post content from the database</li>
+            <li><strong>Rich Text:</strong> Formatted content with images and styling</li>
+            <li><strong>Metadata:</strong> Actual publish dates, author information, and categories</li>
+            <li><strong>SEO Features:</strong> Proper meta tags and social sharing data</li>
+            <li><strong>Navigation:</strong> Previous/next post links</li>
+            <li><strong>Engagement:</strong> Comment system (Phase 4)</li>
+          </ul>
+        </div>
+
+        <div class="technical-demo">
+          <h3>Rails Concepts Demonstrated Here:</h3>
+          
+          <div class="concept-card">
+            <h4>🛤️ URL Parameters</h4>
+            <p>
+              The URL <code>/blog/<%= @post_id %></code> demonstrates Rails parameter capture.
+              The <code>:id</code> in our route becomes <code>params[:id]</code> in the controller.
+            </p>
+          </div>
+          
+          <div class="concept-card">
+            <h4>🎯 RESTful Design</h4>
+            <p>
+              This follows REST conventions where GET /blog/:id shows a specific resource.
+              In Phase 3, this will fetch <code>Post.find(params[:id])</code> from the database.
+            </p>
+          </div>
+          
+          <div class="concept-card">
+            <h4>📝 View Templates</h4>
+            <p>
+              This view automatically renders when <code>BlogController#show</code> completes.
+              Rails matches controller/action names to view file paths.
+            </p>
+          </div>
+          
+          <div class="concept-card">
+            <h4>🔗 Route Helpers</h4>
+            <p>
+              The breadcrumb uses <code>blog_path</code> and <code>root_path</code> helpers
+              generated automatically from our route definitions.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <%# FUTURE ENHANCEMENT: What this will become in Phase 3
+      
+      <div class="post-body">
+        <%= simple_format(@post.content) %>
+      </div>
+      
+      <div class="post-tags">
+        <% @post.tags.each do |tag| %>
+          <%= link_to tag.name, blog_path(tag: tag.name), class: "tag" %>
+        <% end %>
+      </div>
+      
+      %>
+    </article>
+
+    <%# POST NAVIGATION %>
+    <nav class="post-navigation">
+      <div class="nav-links">
+        <%# These will become dynamic in Phase 3 %>
+        <div class="nav-placeholder">
+          <p><strong>Post Navigation (Phase 3):</strong></p>
+          <ul>
+            <li>← Previous Post: Will link to chronologically previous post</li>
+            <li>→ Next Post: Will link to chronologically next post</li>
+            <li>📚 Related Posts: Will show posts with similar tags</li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <%# CALL TO ACTION %>
+    <div class="post-actions">
+      <h3>Explore More</h3>
+      <div class="action-buttons">
+        <%= link_to "← Back to All Posts", blog_path, class: "btn btn-outline" %>
+        <%= link_to "🏠 Home Page", root_path, class: "btn btn-outline" %>
+        <%= link_to "📚 Source Code", "https://github.com/h1n054ur/rails-8-blog-tutorial", 
+            class: "btn btn-primary", target: "_blank", rel: "noopener" %>
+      </div>
+    </div>
+  </main>
+</div>
+
+<%# 
+RAILS CONCEPTS DEMONSTRATED:
+
+1. PARAMETER HANDLING:
+   - @post_id comes from params[:id] in controller
+   - Demonstrates URL parameter capture and usage
+   - Shows data flow from route → controller → view
+
+2. BREADCRUMB NAVIGATION:
+   - Uses multiple Rails path helpers
+   - Shows hierarchical site structure
+   - Improves user experience and SEO
+
+3. SEMANTIC HTML:
+   - article element for main content
+   - header/main structure for accessibility
+   - time element with datetime attribute
+   - nav elements for navigation areas
+
+4. RESPONSIVE DESIGN PREPARATION:
+   - Class structure ready for CSS styling
+   - Mobile-friendly content organization
+   - Accessible markup for screen readers
+
+5. FUTURE-READY STRUCTURE:
+   - Placeholder content shows intended functionality
+   - Comments indicate Phase 3 implementations
+   - Demonstrates Rails templating patterns
+
+PHASE 3 ENHANCEMENTS PLANNED:
+- Database integration with Post model
+- Dynamic content rendering
+- Error handling for missing posts
+- SEO optimization with meta tags
+- Social sharing functionality
+- Comment system integration
+- Related posts suggestions
+
+BEGINNER LEARNING OBJECTIVES:
+- Understanding URL parameters in Rails
+- View template organization and structure
+- Rails helper usage for navigation
+- Semantic HTML for accessibility
+- Planning for future feature integration
+%>

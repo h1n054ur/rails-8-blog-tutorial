@@ -1,0 +1,117 @@
+<%# 
+HOME PAGE VIEW - The main landing page template for our Rails 8 tutorial blog
+
+RAILS CONCEPT: This is an ERB (Embedded Ruby) template that combines HTML with Ruby code.
+ERB allows us to insert dynamic content into HTML using special tags:
+- <% %> executes Ruby code but doesn't output anything
+- <%= %> executes Ruby code AND outputs the result to the HTML
+- <%# %> creates comments that won't appear in the final HTML
+
+FILE NAMING CONVENTION: Rails automatically looks for this file when the 
+HomeController's index action completes. The pattern is:
+app/views/[controller_name]/[action_name].html.erb
+
+LAYOUT INHERITANCE: This view will be inserted into the application layout
+(app/views/layouts/application.html.erb) where the <%= yield %> tag appears.
+%>
+
+<div class="home-page">
+  <%# MAIN WELCOME SECTION
+      This introduces visitors to our tutorial blog application
+  %>
+  <section class="hero">
+    <h1>Welcome to Rails 8 Tutorial Blog</h1>
+    <p class="lead">
+      A complete Rails 8 application built step-by-step to teach modern web development
+      with Ruby on Rails. Perfect for beginners learning Rails conventions and best practices.
+    </p>
+  </section>
+
+  <%# FEATURES SECTION
+      Highlights what visitors can expect from this tutorial application
+  %>
+  <section class="features">
+    <h2>What You'll Learn</h2>
+    <div class="feature-grid">
+      <div class="feature">
+        <h3>📝 Blog Management</h3>
+        <p>Complete CRUD operations for creating, editing, and publishing blog posts</p>
+      </div>
+      
+      <div class="feature">
+        <h3>🔐 Authentication</h3>
+        <p>Secure admin login system with Rails best practices</p>
+      </div>
+      
+      <div class="feature">
+        <h3>🎨 Modern Rails 8</h3>
+        <p>Latest Rails 8 features, conventions, and development patterns</p>
+      </div>
+      
+      <div class="feature">
+        <h3>🚀 Production Ready</h3>
+        <p>Deployment strategies and production configuration</p>
+      </div>
+    </div>
+  </section>
+
+  <%# NAVIGATION TO BLOG SECTION
+      This will link to our blog posts once we build the blog controller
+      For now, we'll show a "Coming Soon" message
+  %>
+  <section class="blog-preview">
+    <h2>Blog Posts</h2>
+    <p>
+      Explore our tutorial blog posts covering Rails development topics.
+      <em>(Blog section coming in Phase 3 of development)</em>
+    </p>
+    
+    <%# FUTURE ENHANCEMENT: This link will work once we create the blog controller
+        <%= link_to "View All Posts", blog_index_path, class: "btn btn-primary" %>
+    <%# For now, we'll show a placeholder %>
+    <a href="#" class="btn btn-secondary disabled">Blog Posts (Coming Soon)</a>
+  </section>
+
+  <%# TUTORIAL INFORMATION
+      Links to documentation and learning resources
+  %>
+  <section class="tutorial-info">
+    <h2>Tutorial Resources</h2>
+    <p>
+      This application is built with comprehensive documentation explaining
+      every Rails concept and implementation decision.
+    </p>
+    
+    <div class="resources">
+      <a href="https://github.com/h1n054ur/rails-8-blog-tutorial" target="_blank" class="btn btn-outline">
+        📚 View Source Code
+      </a>
+      
+      <%# These links will be added in Phase 5 when we create the tutorial documentation
+      <a href="/docs/tutorial" class="btn btn-outline">
+        📖 Step-by-Step Tutorial
+      </a>
+      %>
+    </div>
+  </section>
+</div>
+
+<%# 
+STYLING NOTE: We're using basic CSS classes here. Rails includes minimal default
+styling, but we'll enhance this with proper CSS in the application layout.
+
+ACCESSIBILITY: Notice we use semantic HTML elements (section, h1-h3) and 
+descriptive text for screen readers and SEO.
+
+FUTURE ENHANCEMENTS:
+1. Add dynamic content from the database (featured posts, recent activity)
+2. Include user authentication status in the navigation
+3. Add search functionality
+4. Include testimonials or user feedback
+
+RAILS CONVENTIONS DEMONSTRATED:
+- ERB templating with explanatory comments
+- Semantic HTML structure
+- Placeholder content for future features
+- External link handling with target="_blank"
+%>

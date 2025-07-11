@@ -1,0 +1,181 @@
+<%# 
+BLOG INDEX VIEW - Main blog listing page template
+
+RAILS CONCEPT: This view template is automatically rendered when the 
+BlogController's index action completes. Rails finds this file using:
+app/views/[controller_name]/[action_name].html.erb
+
+FILE NAMING: blog/index.html.erb matches BlogController#index action
+
+LAYOUT INHERITANCE: This content gets inserted into the application layout
+at the <%= yield %> tag, giving us consistent site navigation and footer.
+
+PHASE 2 SCOPE: Placeholder content preparing for Phase 3 database integration
+%>
+
+<%# SET CUSTOM PAGE TITLE: Uses content_for helper to override default title %>
+<% content_for(:title, @page_title || "Blog Posts - Rails 8 Tutorial") %>
+
+<%# SET PAGE DESCRIPTION: For SEO and social media sharing %>
+<% content_for(:description, @page_description) %>
+
+<div class="blog-index">
+  <%# PAGE HEADER SECTION %>
+  <section class="page-header">
+    <h1><%= @page_title %></h1>
+    <p class="page-description">
+      <%= @page_description %>
+    </p>
+  </section>
+
+  <%# BLOG POSTS SECTION - Currently placeholder, will be dynamic in Phase 3 %>
+  <section class="blog-posts">
+    <%# PHASE 2 PLACEHOLDER: Static content demonstrating layout structure %>
+    <div class="posts-coming-soon">
+      <div class="placeholder-card">
+        <h2>📝 Blog Posts Coming Soon!</h2>
+        <p>
+          We're currently in <strong>Phase 2</strong> of development, building the public interface.
+          Blog posts will be available in <strong>Phase 3</strong> when we add:
+        </p>
+        
+        <ul class="feature-list">
+          <li>📊 Post database model</li>
+          <li>✍️ Admin post creation interface</li>
+          <li>🎯 Published/draft status management</li>
+          <li>🔍 Post listing and individual post views</li>
+          <li>📱 Mobile-responsive post layout</li>
+        </ul>
+        
+        <div class="development-status">
+          <h3>Development Progress</h3>
+          <div class="progress-list">
+            <div class="progress-item completed">
+              <span class="status">✅</span>
+              <span class="phase">Phase 1:</span>
+              <span class="description">Documentation Framework</span>
+            </div>
+            <div class="progress-item completed">
+              <span class="status">✅</span>
+              <span class="phase">Phase 2:</span>
+              <span class="description">Public Interface (Current)</span>
+            </div>
+            <div class="progress-item pending">
+              <span class="status">⏳</span>
+              <span class="phase">Phase 3:</span>
+              <span class="description">Blog System & Database</span>
+            </div>
+            <div class="progress-item pending">
+              <span class="status">⏳</span>
+              <span class="phase">Phase 4:</span>
+              <span class="description">Admin Panel & CRUD</span>
+            </div>
+            <div class="progress-item pending">
+              <span class="status">⏳</span>
+              <span class="phase">Phase 5:</span>
+              <span class="description">Deployment & Documentation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%# FUTURE ENHANCEMENT PREVIEW: What this section will become in Phase 3
+    
+    <div class="posts-grid">
+      <% @posts.each do |post| %>
+        <article class="post-card">
+          <h2><%= link_to post.title, blog_post_path(post) %></h2>
+          <p class="post-meta">
+            Published <%= post.published_at.strftime("%B %d, %Y") %>
+            by <%= post.user.name %>
+          </p>
+          <p class="post-excerpt"><%= post.excerpt %></p>
+          <%= link_to "Read More", blog_post_path(post), class: "read-more-link" %>
+        </article>
+      <% end %>
+    </div>
+    
+    %>
+  </section>
+
+  <%# TUTORIAL INFORMATION SECTION %>
+  <section class="tutorial-info">
+    <h2>About This Tutorial Application</h2>
+    <p>
+      This Rails 8 tutorial blog demonstrates modern web development practices:
+    </p>
+    
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>🏗️ MVC Architecture</h3>
+        <p>Clean separation of concerns with Models, Views, and Controllers</p>
+      </div>
+      
+      <div class="info-card">
+        <h3>🎨 Responsive Design</h3>
+        <p>Mobile-first CSS with professional styling and accessibility</p>
+      </div>
+      
+      <div class="info-card">
+        <h3>🔒 Security Best Practices</h3>
+        <p>Authentication, authorization, and Rails security features</p>
+      </div>
+      
+      <div class="info-card">
+        <h3>📚 Educational Focus</h3>
+        <p>Comprehensive documentation explaining every implementation decision</p>
+      </div>
+    </div>
+    
+    <div class="resources">
+      <%= link_to "View Source Code", "https://github.com/h1n054ur/rails-8-blog-tutorial", 
+          class: "btn btn-primary", target: "_blank", rel: "noopener" %>
+      <%= link_to "Back to Home", root_path, class: "btn btn-outline" %>
+    </div>
+  </section>
+</div>
+
+<%# 
+RAILS CONCEPTS DEMONSTRATED IN THIS VIEW:
+
+1. ERB TEMPLATING:
+   - <%= %> for output (displays content)
+   - <% %> for logic (executes Ruby without output)
+   - <%# %> for comments (server-side only, not in HTML)
+
+2. RAILS HELPERS:
+   - content_for(:title) sets page-specific title
+   - content_for(:description) sets meta description
+   - link_to creates anchor tags with Rails path helpers
+
+3. INSTANCE VARIABLES:
+   - @page_title and @page_description come from controller
+   - Available automatically in view templates
+   - Nil handling with || operator for defaults
+
+4. LAYOUT INTEGRATION:
+   - Content gets wrapped by application layout
+   - Custom title/description override layout defaults
+   - Inherits site navigation and footer
+
+5. SEMANTIC HTML:
+   - Proper heading hierarchy (h1, h2, h3)
+   - Section elements for content organization
+   - Accessible markup with meaningful structure
+
+FUTURE ENHANCEMENTS (Phase 3):
+- Dynamic post listing from database
+- Pagination for large numbers of posts
+- Search and filtering functionality
+- Category and tag organization
+- Post excerpt generation
+- Social sharing features
+
+BEGINNER LEARNING POINTS:
+- Views focus on presentation, not logic
+- ERB allows mixing HTML and Ruby naturally
+- Rails helpers provide convenient HTML generation
+- Instance variables connect controllers to views
+- Semantic HTML improves accessibility and SEO
+%>
