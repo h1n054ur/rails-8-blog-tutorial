@@ -1,24 +1,4 @@
-<%# 
-HOME PAGE VIEW - The main landing page template for our Rails 8 tutorial blog
-
-RAILS CONCEPT: This is an ERB (Embedded Ruby) template that combines HTML with Ruby code.
-ERB allows us to insert dynamic content into HTML using special tags:
-- <% %> executes Ruby code but doesn't output anything
-- <%= %> executes Ruby code AND outputs the result to the HTML
-- <%# %> creates comments that won't appear in the final HTML
-
-FILE NAMING CONVENTION: Rails automatically looks for this file when the 
-HomeController's index action completes. The pattern is:
-app/views/[controller_name]/[action_name].html.erb
-
-LAYOUT INHERITANCE: This view will be inserted into the application layout
-(app/views/layouts/application.html.erb) where the <%= yield %> tag appears.
-%>
-
 <div class="home-page">
-  <%# MAIN WELCOME SECTION
-      This introduces visitors to our tutorial blog application
-  %>
   <section class="hero">
     <h1>Welcome to Rails 8 Tutorial Blog</h1>
     <p class="lead">
@@ -27,9 +7,6 @@ LAYOUT INHERITANCE: This view will be inserted into the application layout
     </p>
   </section>
 
-  <%# FEATURES SECTION
-      Highlights what visitors can expect from this tutorial application
-  %>
   <section class="features">
     <h2>What You'll Learn</h2>
     <div class="feature-grid">
@@ -55,26 +32,15 @@ LAYOUT INHERITANCE: This view will be inserted into the application layout
     </div>
   </section>
 
-  <%# NAVIGATION TO BLOG SECTION
-      This will link to our blog posts once we build the blog controller
-      For now, we'll show a "Coming Soon" message
-  %>
   <section class="blog-preview">
     <h2>Blog Posts</h2>
     <p>
       Explore our tutorial blog posts covering Rails development topics.
-      <em>(Blog section coming in Phase 3 of development)</em>
     </p>
     
-    <%# FUTURE ENHANCEMENT: This link will work once we create the blog controller
-        <%= link_to "View All Posts", blog_index_path, class: "btn btn-primary" %>
-    <%# For now, we'll show a placeholder %>
-    <a href="#" class="btn btn-secondary disabled">Blog Posts (Coming Soon)</a>
+    <%= link_to "View Blog Posts", blog_path, class: "btn btn-primary" %>
   </section>
 
-  <%# TUTORIAL INFORMATION
-      Links to documentation and learning resources
-  %>
   <section class="tutorial-info">
     <h2>Tutorial Resources</h2>
     <p>
@@ -86,32 +52,148 @@ LAYOUT INHERITANCE: This view will be inserted into the application layout
       <a href="https://github.com/h1n054ur/rails-8-blog-tutorial" target="_blank" class="btn btn-outline">
         📚 View Source Code
       </a>
-      
-      <%# These links will be added in Phase 5 when we create the tutorial documentation
-      <a href="/docs/tutorial" class="btn btn-outline">
-        📖 Step-by-Step Tutorial
-      </a>
-      %>
     </div>
   </section>
 </div>
 
-<%# 
-STYLING NOTE: We're using basic CSS classes here. Rails includes minimal default
-styling, but we'll enhance this with proper CSS in the application layout.
+<style>
+  .home-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
 
-ACCESSIBILITY: Notice we use semantic HTML elements (section, h1-h3) and 
-descriptive text for screen readers and SEO.
+  .hero {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 3rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+  }
 
-FUTURE ENHANCEMENTS:
-1. Add dynamic content from the database (featured posts, recent activity)
-2. Include user authentication status in the navigation
-3. Add search functionality
-4. Include testimonials or user feedback
+  .hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
 
-RAILS CONVENTIONS DEMONSTRATED:
-- ERB templating with explanatory comments
-- Semantic HTML structure
-- Placeholder content for future features
-- External link handling with target="_blank"
-%>
+  .lead {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  .features {
+    margin-bottom: 3rem;
+  }
+
+  .features h2 {
+    text-align: center;
+    color: #1f2937;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .feature {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .feature:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .feature h3 {
+    color: #1f2937;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature p {
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .blog-preview {
+    background: #f8fafc;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .blog-preview h2 {
+    color: #1f2937;
+    margin-bottom: 1rem;
+  }
+
+  .blog-preview p {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+  }
+
+  .tutorial-info {
+    text-align: center;
+  }
+
+  .tutorial-info h2 {
+    color: #1f2937;
+    margin-bottom: 1rem;
+  }
+
+  .tutorial-info p {
+    color: #6b7280;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .resources {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 640px) {
+    .home-page {
+      padding: 1rem;
+    }
+
+    .hero {
+      padding: 2rem 1rem;
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+    }
+
+    .feature-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .resources {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .resources .btn {
+      width: 100%;
+      max-width: 200px;
+    }
+  }
+</style>

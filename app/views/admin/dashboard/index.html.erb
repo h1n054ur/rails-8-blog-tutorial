@@ -1,0 +1,404 @@
+<% content_for :title, "#{@page_title} - Rails 8 Tutorial Blog" %>
+
+<div class="admin-dashboard">
+  
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">
+        🎛️ Admin Dashboard
+      </h1>
+      <p class="dashboard-subtitle">
+        Welcome back, <strong><%= @current_admin.email %></strong>!
+      </p>
+    </div>
+    
+    <div class="header-actions">
+      <%= link_to "🚪 Logout", admin_logout_path, 
+            data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to logout?" },
+            class: "btn btn-secondary" %>
+    </div>
+  </div>
+  
+  <div class="dashboard-stats">
+    <h2 class="stats-title">📊 Blog Statistics</h2>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-content">
+          <div class="stat-number"><%= @total_users %></div>
+          <div class="stat-label">Total Users</div>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">🛡️</div>
+        <div class="stat-content">
+          <div class="stat-number"><%= @admin_users %></div>
+          <div class="stat-label">Admin Users</div>
+        </div>
+      </div>
+      
+      <div class="stat-card future-feature">
+        <div class="stat-icon">📝</div>
+        <div class="stat-content">
+          <div class="stat-number"><%= @total_posts %></div>
+          <div class="stat-label">Total Posts</div>
+          <small class="stat-note">Phase 4 Feature</small>
+        </div>
+      </div>
+      
+      <div class="stat-card future-feature">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+          <div class="stat-number"><%= @published_posts %></div>
+          <div class="stat-label">Published Posts</div>
+          <small class="stat-note">Phase 4 Feature</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="dashboard-actions">
+    <h2 class="actions-title">⚡ Quick Actions</h2>
+    
+    <div class="actions-grid">
+      <div class="action-card future-feature">
+        <div class="action-icon">✏️</div>
+        <h3 class="action-title">Create New Post</h3>
+        <p class="action-description">
+          Write and publish new blog posts
+        </p>
+        <button class="btn btn-primary" disabled>
+          Coming in Phase 4
+        </button>
+      </div>
+      
+      <div class="action-card future-feature">
+        <div class="action-icon">📋</div>
+        <h3 class="action-title">Manage Posts</h3>
+        <p class="action-description">
+          Edit, delete, and organize blog posts
+        </p>
+        <button class="btn btn-primary" disabled>
+          Coming in Phase 4
+        </button>
+      </div>
+      
+      <div class="action-card">
+        <div class="action-icon">🏠</div>
+        <h3 class="action-title">View Public Site</h3>
+        <p class="action-description">
+          See your blog as visitors see it
+        </p>
+        <%= link_to "Visit Home Page", root_path, class: "btn btn-primary", target: "_blank" %>
+      </div>
+      
+      <div class="action-card">
+        <div class="action-icon">📖</div>
+        <h3 class="action-title">View Blog</h3>
+        <p class="action-description">
+          Check the public blog interface
+        </p>
+        <%= link_to "View Blog", blog_path, class: "btn btn-primary", target: "_blank" %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="dashboard-progress">
+    <h2 class="progress-title">🎯 Tutorial Progress</h2>
+    
+    <div class="progress-content">
+      <div class="current-phase">
+        <h3 class="phase-title">Current Phase</h3>
+        <div class="phase-badge phase-current">
+          <%= @tutorial_phase %>
+        </div>
+        <p class="phase-description">
+          ✅ Admin authentication system completed!
+        </p>
+      </div>
+      
+      <div class="next-phase">
+        <h3 class="phase-title">Next Phase</h3>
+        <div class="phase-badge phase-next">
+          <%= @next_phase %>
+        </div>
+        <p class="phase-description">
+          🚀 Ready to build blog post CRUD operations
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="dashboard-system">
+    <h2 class="system-title">⚙️ System Information</h2>
+    
+    <div class="system-grid">
+      <div class="system-item">
+        <strong>Rails Version:</strong> 8.0.2
+      </div>
+      <div class="system-item">
+        <strong>Ruby Version:</strong> 3.4.4
+      </div>
+      <div class="system-item">
+        <strong>Authentication:</strong> has_secure_password
+      </div>
+      <div class="system-item">
+        <strong>Database:</strong> SQLite3 (development)
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<style>
+  .admin-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+  }
+  
+  .dashboard-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  
+  .dashboard-subtitle {
+    margin: 0.5rem 0 0 0;
+    opacity: 0.9;
+  }
+  
+  .dashboard-stats {
+    margin-bottom: 2rem;
+  }
+  
+  .stats-title {
+    color: #1f2937;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .stat-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stat-icon {
+    font-size: 2rem;
+  }
+  
+  .stat-number {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #1f2937;
+  }
+  
+  .stat-label {
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .stat-note {
+    color: #9ca3af;
+    font-size: 0.75rem;
+    font-style: italic;
+  }
+  
+  .future-feature {
+    opacity: 0.7;
+    position: relative;
+  }
+  
+  .future-feature::after {
+    content: "Phase 4";
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: #fbbf24;
+    color: #92400e;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  
+  .dashboard-actions {
+    margin-bottom: 2rem;
+  }
+  
+  .actions-title {
+    color: #1f2937;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  
+  .action-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .action-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .action-title {
+    color: #1f2937;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  
+  .action-description {
+    color: #6b7280;
+    margin-bottom: 1rem;
+  }
+  
+  .dashboard-progress {
+    margin-bottom: 2rem;
+  }
+  
+  .progress-title {
+    color: #1f2937;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .progress-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+  
+  .current-phase, .next-phase {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  
+  .phase-title {
+    color: #374151;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  
+  .phase-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .phase-current {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  
+  .phase-next {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+  
+  .phase-description {
+    color: #6b7280;
+    margin: 0;
+  }
+  
+  .dashboard-system {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  
+  .system-title {
+    color: #1f2937;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .system-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.75rem;
+  }
+  
+  .system-item {
+    color: #4b5563;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  
+  @media (max-width: 768px) {
+    .admin-dashboard {
+      padding: 1rem;
+    }
+    
+    .dashboard-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+    }
+    
+    .stats-grid, .actions-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .progress-content {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,22 +1,20 @@
-<%# 
-APPLICATION LAYOUT - The master template that wraps all pages in our Rails application
-
-RAILS CONCEPT: This layout file is automatically used by all controllers unless 
-specified otherwise. Every view template gets inserted where <%= yield %> appears.
-
-LAYOUT INHERITANCE: All pages share this common structure for:
-- HTML document structure and metadata
-- Site-wide navigation and branding  
-- CSS and JavaScript includes
-- Flash message display
-- Footer and consistent page elements
-
-WHY LAYOUTS MATTER:
-- DRY principle - write once, use everywhere
-- Consistent user experience across all pages
-- Central place for site-wide changes
-- SEO and accessibility standards
-%>
+<%# APPLICATION LAYOUT - The master template that wraps all pages in our Rails application %>
+<%# %>
+<%# RAILS CONCEPT: This layout file is automatically used by all controllers unless %>
+<%# specified otherwise. Every view template gets inserted where yield appears. %>
+<%# %>
+<%# LAYOUT INHERITANCE: All pages share this common structure for: %>
+<%# - HTML document structure and metadata %>
+<%# - Site-wide navigation and branding %>
+<%# - CSS and JavaScript includes %>
+<%# - Flash message display %>
+<%# - Footer and consistent page elements %>
+<%# %>
+<%# WHY LAYOUTS MATTER: %>
+<%# - DRY principle - write once, use everywhere %>
+<%# - Consistent user experience across all pages %>
+<%# - Central place for site-wide changes %>
+<%# - SEO and accessibility standards %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -70,13 +68,11 @@ WHY LAYOUTS MATTER:
               
               <%# BLOG LINK: Now active with blog controller foundation %>
               <%= link_to "Blog", blog_path, 
-                  class: "nav-link #{'active' if current_page?(blog_path) || current_page?(controller: 'blog')}" %>
+                  class: "nav-link #{'active' if request.path.start_with?('/blog')}" %>
               
-              <%# ADMIN LINK: Will be activated in Phase 4 when admin panel exists %>
-              <%# TODO Phase 4: Replace with admin_dashboard_path when admin system is built %>
-              <a href="#" class="nav-link disabled" title="Coming in Phase 4">
-                Admin <span class="coming-soon">(Coming Soon)</span>
-              </a>
+              <%# ADMIN LINK: Now active with Phase 3 authentication system %>
+              <%= link_to "Admin", admin_login_path, 
+                  class: "nav-link #{'active' if request.path.start_with?('/admin')}" %>
               
               <%# EXTERNAL LINK: GitHub repository %>
               <%= link_to "Source Code", "https://github.com/h1n054ur/rails-8-blog-tutorial", 
@@ -129,10 +125,10 @@ WHY LAYOUTS MATTER:
             <h4>Tutorial Progress</h4>
             <p>
               ✅ Phase 1: Documentation Framework<br>
-              🚧 Phase 2: Public Interface (In Progress)<br>
-              ⏳ Phase 3: Blog System<br>
-              ⏳ Phase 4: Admin Panel<br>
-              ⏳ Phase 5: Deployment
+              ✅ Phase 2: Public Interface<br>
+              ✅ Phase 3: Admin Authentication<br>
+              🚧 Phase 4: Blog Post Management (Next)<br>
+              ⏳ Phase 5: Tutorial Documentation
             </p>
           </div>
         </div>
@@ -142,46 +138,70 @@ WHY LAYOUTS MATTER:
         </div>
       </div>
     </footer>
+
+    <%# FLASH MESSAGE CLOSE FUNCTIONALITY %>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Add click event listeners to all flash close buttons
+        document.querySelectorAll('.flash-close').forEach(function(closeButton) {
+          closeButton.addEventListener('click', function() {
+            // Find the parent flash message and hide it
+            const flashMessage = this.closest('.flash');
+            if (flashMessage) {
+              flashMessage.style.display = 'none';
+            }
+          });
+        });
+        
+        // Auto-hide flash messages after 5 seconds (optional)
+        document.querySelectorAll('.flash').forEach(function(flashMessage) {
+          setTimeout(function() {
+            flashMessage.style.opacity = '0';
+            setTimeout(function() {
+              flashMessage.style.display = 'none';
+            }, 300);
+          }, 5000);
+        });
+      });
+    </script>
   </body>
 </html>
 
-<%# 
-RAILS CONCEPTS DEMONSTRATED IN THIS LAYOUT:
-
-1. CONTENT_FOR HELPER:
-   - content_for(:title) allows pages to set custom titles
-   - yield :head allows pages to add custom head content
-   - Provides flexibility while maintaining consistency
-
-2. RAILS LINK HELPERS:
-   - link_to generates anchor tags with Rails path helpers
-   - root_path helper automatically generates correct URL
-   - current_page? helper detects active navigation items
-
-3. FLASH MESSAGES:
-   - notice and alert are Rails conventions for user feedback
-   - Automatically available in all views
-   - Used by controllers to communicate action results
-
-4. SEMANTIC HTML:
-   - Proper use of header, nav, main, footer elements
-   - ARIA labels for accessibility
-   - Role attributes for screen readers
-
-5. RAILS ASSET PIPELINE:
-   - stylesheet_link_tag includes CSS with cache busting
-   - javascript_importmap_tags handles JavaScript modules
-   - data-turbo-track enables Turbo cache management
-
-6. PROGRESSIVE ENHANCEMENT:
-   - Works without JavaScript
-   - Enhanced with Turbo for SPA-like experience
-   - Mobile-responsive meta tags
-
-FUTURE ENHANCEMENTS (will be added in later phases):
-- User authentication status in navigation
-- Dynamic menu based on user permissions
-- Search functionality
-- Breadcrumb navigation
-- Theme switching capability
-%>
+<%# RAILS CONCEPTS DEMONSTRATED IN THIS LAYOUT: %>
+<%# %>
+<%# 1. CONTENT_FOR HELPER: %>
+<%#    - content_for(:title) allows pages to set custom titles %>
+<%#    - yield :head allows pages to add custom head content %>
+<%#    - Provides flexibility while maintaining consistency %>
+<%# %>
+<%# 2. RAILS LINK HELPERS: %>
+<%#    - link_to generates anchor tags with Rails path helpers %>
+<%#    - root_path helper automatically generates correct URL %>
+<%#    - current_page? helper detects active navigation items %>
+<%# %>
+<%# 3. FLASH MESSAGES: %>
+<%#    - notice and alert are Rails conventions for user feedback %>
+<%#    - Automatically available in all views %>
+<%#    - Used by controllers to communicate action results %>
+<%# %>
+<%# 4. SEMANTIC HTML: %>
+<%#    - Proper use of header, nav, main, footer elements %>
+<%#    - ARIA labels for accessibility %>
+<%#    - Role attributes for screen readers %>
+<%# %>
+<%# 5. RAILS ASSET PIPELINE: %>
+<%#    - stylesheet_link_tag includes CSS with cache busting %>
+<%#    - javascript_importmap_tags handles JavaScript modules %>
+<%#    - data-turbo-track enables Turbo cache management %>
+<%# %>
+<%# 6. PROGRESSIVE ENHANCEMENT: %>
+<%#    - Works without JavaScript %>
+<%#    - Enhanced with Turbo for SPA-like experience %>
+<%#    - Mobile-responsive meta tags %>
+<%# %>
+<%# FUTURE ENHANCEMENTS (will be added in later phases): %>
+<%# - User authentication status in navigation %>
+<%# - Dynamic menu based on user permissions %>
+<%# - Search functionality %>
+<%# - Breadcrumb navigation %>
+<%# - Theme switching capability %>

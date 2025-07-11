@@ -1,19 +1,6 @@
-<%# 
-BLOG SHOW VIEW - Individual blog post display template
-
-RAILS CONCEPT: This view renders when BlogController's show action completes.
-The URL pattern /blog/:id routes here, with the ID available as params[:id].
-
-FILE NAMING: blog/show.html.erb matches BlogController#show action
-
-PHASE 2 SCOPE: Placeholder demonstrating individual post structure for Phase 3
-%>
-
-<%# SET CUSTOM PAGE TITLE %>
 <% content_for(:title, "Blog Post #{@post_id} - Rails 8 Tutorial") %>
 
 <div class="blog-show">
-  <%# BREADCRUMB NAVIGATION %>
   <nav class="breadcrumb" aria-label="breadcrumb">
     <%= link_to "Home", root_path %>
     <span class="separator">→</span>
@@ -22,9 +9,7 @@ PHASE 2 SCOPE: Placeholder demonstrating individual post structure for Phase 3
     <span class="current">Post <%= @post_id %></span>
   </nav>
 
-  <%# MAIN POST CONTENT AREA %>
   <main class="post-content">
-    <%# PHASE 2 PLACEHOLDER: Demonstrates structure for future database content %>
     <article class="blog-post placeholder">
       <header class="post-header">
         <h1>Sample Blog Post #<%= @post_id %></h1>
@@ -37,22 +22,22 @@ PHASE 2 SCOPE: Placeholder demonstrating individual post structure for Phase 3
 
       <div class="post-body">
         <div class="placeholder-notice">
-          <h2>🚧 Post Content Coming in Phase 3!</h2>
+          <h2>🚧 Post Content Coming in Phase 4!</h2>
           <p>
             You've reached the individual blog post view for post ID <strong><%= @post_id %></strong>.
             This demonstrates the URL structure and routing that will be used for actual blog posts.
           </p>
         </div>
 
-        <div class="phase-3-preview">
-          <h3>What This Page Will Include in Phase 3:</h3>
+        <div class="phase-preview">
+          <h3>What This Page Will Include in Phase 4:</h3>
           <ul>
             <li><strong>Dynamic Content:</strong> Real blog post content from the database</li>
             <li><strong>Rich Text:</strong> Formatted content with images and styling</li>
             <li><strong>Metadata:</strong> Actual publish dates, author information, and categories</li>
             <li><strong>SEO Features:</strong> Proper meta tags and social sharing data</li>
             <li><strong>Navigation:</strong> Previous/next post links</li>
-            <li><strong>Engagement:</strong> Comment system (Phase 4)</li>
+            <li><strong>Engagement:</strong> Comment system (future enhancement)</li>
           </ul>
         </div>
 
@@ -71,7 +56,7 @@ PHASE 2 SCOPE: Placeholder demonstrating individual post structure for Phase 3
             <h4>🎯 RESTful Design</h4>
             <p>
               This follows REST conventions where GET /blog/:id shows a specific resource.
-              In Phase 3, this will fetch <code>Post.find(params[:id])</code> from the database.
+              In Phase 4, this will fetch <code>Post.find(params[:id])</code> from the database.
             </p>
           </div>
           
@@ -92,28 +77,12 @@ PHASE 2 SCOPE: Placeholder demonstrating individual post structure for Phase 3
           </div>
         </div>
       </div>
-
-      <%# FUTURE ENHANCEMENT: What this will become in Phase 3
-      
-      <div class="post-body">
-        <%= simple_format(@post.content) %>
-      </div>
-      
-      <div class="post-tags">
-        <% @post.tags.each do |tag| %>
-          <%= link_to tag.name, blog_path(tag: tag.name), class: "tag" %>
-        <% end %>
-      </div>
-      
-      %>
     </article>
 
-    <%# POST NAVIGATION %>
     <nav class="post-navigation">
       <div class="nav-links">
-        <%# These will become dynamic in Phase 3 %>
         <div class="nav-placeholder">
-          <p><strong>Post Navigation (Phase 3):</strong></p>
+          <p><strong>Post Navigation (Phase 4):</strong></p>
           <ul>
             <li>← Previous Post: Will link to chronologically previous post</li>
             <li>→ Next Post: Will link to chronologically next post</li>
@@ -123,7 +92,6 @@ PHASE 2 SCOPE: Placeholder demonstrating individual post structure for Phase 3
       </div>
     </nav>
 
-    <%# CALL TO ACTION %>
     <div class="post-actions">
       <h3>Explore More</h3>
       <div class="action-buttons">
@@ -136,48 +104,226 @@ PHASE 2 SCOPE: Placeholder demonstrating individual post structure for Phase 3
   </main>
 </div>
 
-<%# 
-RAILS CONCEPTS DEMONSTRATED:
+<style>
+  .blog-show {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
 
-1. PARAMETER HANDLING:
-   - @post_id comes from params[:id] in controller
-   - Demonstrates URL parameter capture and usage
-   - Shows data flow from route → controller → view
+  .breadcrumb {
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
 
-2. BREADCRUMB NAVIGATION:
-   - Uses multiple Rails path helpers
-   - Shows hierarchical site structure
-   - Improves user experience and SEO
+  .breadcrumb a {
+    color: #3b82f6;
+    text-decoration: none;
+  }
 
-3. SEMANTIC HTML:
-   - article element for main content
-   - header/main structure for accessibility
-   - time element with datetime attribute
-   - nav elements for navigation areas
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
 
-4. RESPONSIVE DESIGN PREPARATION:
-   - Class structure ready for CSS styling
-   - Mobile-friendly content organization
-   - Accessible markup for screen readers
+  .separator {
+    margin: 0 0.5rem;
+    color: #9ca3af;
+  }
 
-5. FUTURE-READY STRUCTURE:
-   - Placeholder content shows intended functionality
-   - Comments indicate Phase 3 implementations
-   - Demonstrates Rails templating patterns
+  .current {
+    color: #374151;
+    font-weight: 500;
+  }
 
-PHASE 3 ENHANCEMENTS PLANNED:
-- Database integration with Post model
-- Dynamic content rendering
-- Error handling for missing posts
-- SEO optimization with meta tags
-- Social sharing functionality
-- Comment system integration
-- Related posts suggestions
+  .post-content {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
 
-BEGINNER LEARNING OBJECTIVES:
-- Understanding URL parameters in Rails
-- View template organization and structure
-- Rails helper usage for navigation
-- Semantic HTML for accessibility
-- Planning for future feature integration
-%>
+  .post-header {
+    padding: 2rem 2rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .post-header h1 {
+    color: #1f2937;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+
+  .post-meta {
+    display: flex;
+    gap: 1rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .post-meta time {
+    font-weight: 500;
+  }
+
+  .post-body {
+    padding: 2rem;
+  }
+
+  .placeholder-notice {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .placeholder-notice h2 {
+    color: #92400e;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .placeholder-notice p {
+    color: #a16207;
+    margin: 0;
+  }
+
+  .phase-preview {
+    background: #f0f9ff;
+    border: 1px solid #0ea5e9;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .phase-preview h3 {
+    color: #0c4a6e;
+    margin-bottom: 1rem;
+  }
+
+  .phase-preview ul {
+    color: #075985;
+    margin: 0;
+    padding-left: 1.5rem;
+  }
+
+  .phase-preview li {
+    margin-bottom: 0.5rem;
+  }
+
+  .technical-demo {
+    margin-top: 2rem;
+  }
+
+  .technical-demo h3 {
+    color: #1f2937;
+    margin-bottom: 1rem;
+  }
+
+  .concept-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .concept-card h4 {
+    color: #1e40af;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .concept-card p {
+    color: #4b5563;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .concept-card code {
+    background: #f1f5f9;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-family: monospace;
+    color: #1e40af;
+  }
+
+  .post-navigation {
+    padding: 2rem;
+    border-top: 1px solid #f3f4f6;
+    background: #f9fafb;
+  }
+
+  .nav-placeholder p {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+
+  .nav-placeholder ul {
+    color: #6b7280;
+    margin: 0;
+    padding-left: 1.5rem;
+  }
+
+  .nav-placeholder li {
+    margin-bottom: 0.25rem;
+  }
+
+  .post-actions {
+    padding: 2rem;
+    text-align: center;
+    border-top: 1px solid #f3f4f6;
+  }
+
+  .post-actions h3 {
+    color: #1f2937;
+    margin-bottom: 1rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 640px) {
+    .blog-show {
+      padding: 1rem;
+    }
+
+    .post-header {
+      padding: 1.5rem 1.5rem 1rem;
+    }
+
+    .post-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .post-body {
+      padding: 1.5rem;
+    }
+
+    .post-navigation, .post-actions {
+      padding: 1.5rem;
+    }
+
+    .post-meta {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .action-buttons .btn {
+      width: 100%;
+      max-width: 200px;
+    }
+  }
+</style>

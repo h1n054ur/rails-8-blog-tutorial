@@ -58,11 +58,57 @@ Rails.application.routes.draw do
   # - blog_post_path(123) → "/blog/123" (for linking to specific post)
   # - blog_url → "http://domain.com/blog" (full URL version)
   #
-  # WHY CUSTOM ROUTES HERE: 
-  # Later in Phase 4, we'll add resourceful routes for admin:
-  # namespace :admin do
-  #   resources :posts  # Full CRUD for admin
-  # end
+  # ADMIN AUTHENTICATION ROUTES - Secure admin panel access
   #
-  # This separation keeps public and admin interfaces distinct and secure.
+  # WHAT THESE ROUTES DO: Handle admin user login/logout workflow
+  # - GET /admin/login → admin/sessions#new (display login form)  
+  # - POST /admin/login → admin/sessions#create (process login)
+  # - DELETE /admin/logout → admin/sessions#destroy (logout user)
+  #
+  # ROUTING DESIGN DECISIONS:
+  # 1. NAMESPACE: All admin routes under /admin/ for clear separation
+  # 2. SESSIONS: Login/logout is session management, not user management
+  # 3. RESTful PATTERN: new/create/destroy actions follow Rails conventions
+  # 4. SECURITY: Admin routes separate from public interface
+  #
+  # RAILS CONCEPTS DEMONSTRATED:
+  # - Custom routes for authentication workflow
+  # - Descriptive URL patterns (/admin/login vs /sessions/new)
+  # - Named route helpers for clean controllers and views
+  # - HTTP method mapping (GET for forms, POST for submission, DELETE for logout)
+  #
+  # BEGINNER EXPLANATION:
+  # - GET requests are for displaying pages (login form)
+  # - POST requests are for submitting data (login credentials)
+  # - DELETE requests are for removing something (user session)
+  # - 'as:' creates helper methods for generating these URLs
+  #
+  # ROUTE HELPERS CREATED:
+  # - admin_login_path → "/admin/login" (GET - show login form)
+  # - admin_login_path → "/admin/login" (POST - process login)
+  # - admin_logout_path → "/admin/logout" (DELETE - logout user)
+  get '/admin/login', to: 'admin/sessions#new', as: 'admin_login'
+  post '/admin/login', to: 'admin/sessions#create'
+  delete '/admin/logout', to: 'admin/sessions#destroy', as: 'admin_logout'
+  
+  # ADMIN DASHBOARD ROUTE - Main admin interface
+  #
+  # WHAT THIS ROUTE DOES: Provides main admin panel interface
+  # - GET /admin → admin/dashboard#index (admin overview page)
+  #
+  # DESIGN DECISION: Simple admin root rather than complex nested routes
+  # This creates a clear entry point for admin functionality
+  #
+  # FUTURE EXPANSION: In Phase 4, we'll add:
+  # namespace :admin do
+  #   resources :posts  # Full CRUD for blog posts
+  #   root 'dashboard#index'  # Could use this syntax instead
+  # end
+  get '/admin', to: 'admin/dashboard#index', as: 'admin_dashboard'
+  
+  # WHY CUSTOM ROUTES HERE: 
+  # - Clear, readable URLs that match user expectations
+  # - Separation between public blog reading and admin management
+  # - Security through clear admin namespace
+  # - Foundation for Phase 4 admin functionality expansion
 end

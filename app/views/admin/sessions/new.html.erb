@@ -1,0 +1,210 @@
+<% content_for :title, "Admin Login - Rails 8 Tutorial Blog" %>
+
+<div class="admin-login-container">
+  
+  <div class="admin-header">
+    <h1 class="admin-title">
+      🔐 Admin Login
+    </h1>
+    <p class="admin-subtitle">
+      Access the Rails 8 Tutorial Blog administration panel
+    </p>
+  </div>
+
+  <%= form_with url: admin_login_path, local: true, class: "admin-login-form" do |form| %>
+    
+    <div class="form-group">
+      <%= form.label :email, "Email Address", class: "form-label" %>
+      
+      <%= form.email_field :email, 
+            class: "form-input", 
+            placeholder: "admin@example.com",
+            required: true,
+            autofocus: true %>
+      
+      <small class="form-help">
+        📝 Tutorial credentials: admin@example.com
+      </small>
+    </div>
+    
+    <div class="form-group">
+      <%= form.label :password, "Password", class: "form-label" %>
+      
+      <%= form.password_field :password, 
+            class: "form-input", 
+            placeholder: "Enter your password",
+            required: true %>
+      
+      <small class="form-help">
+        🔑 Tutorial password: password123
+      </small>
+    </div>
+    
+    <div class="form-group">
+      <%= form.submit "🚀 Login to Admin Panel", class: "btn btn-primary btn-login" %>
+    </div>
+    
+  <% end %>
+  
+  <div class="admin-navigation">
+    <%= link_to "← Back to Home", root_path, class: "btn btn-secondary" %>
+    <%= link_to "📝 View Blog", blog_path, class: "btn btn-secondary" %>
+  </div>
+  
+  <div class="admin-info">
+    <h3 class="info-title">🎓 Learning Focus</h3>
+    <div class="info-content">
+      <p><strong>Rails Concepts in This Form:</strong></p>
+      <ul class="concept-list">
+        <li><strong>form_with</strong>: Rails 5+ form helper with security</li>
+        <li><strong>CSRF Protection</strong>: Automatic security token inclusion</li>
+        <li><strong>Route Helpers</strong>: admin_login_path for clean URLs</li>
+        <li><strong>Flash Messages</strong>: User feedback system integration</li>
+        <li><strong>HTML5 Validation</strong>: Browser-side form validation</li>
+      </ul>
+      
+      <p><strong>Security Features:</strong></p>
+      <ul class="security-list">
+        <li>🛡️ CSRF token prevents cross-site request forgery</li>
+        <li>🔒 Password field hides input characters</li>
+        <li>✅ HTML5 required attributes ensure data presence</li>
+        <li>🎯 Secure form submission to protected endpoint</li>
+      </ul>
+    </div>
+  </div>
+  
+</div>
+
+<style>
+  .admin-login-container {
+    max-width: 480px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+  }
+  
+  .admin-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .admin-title {
+    color: #1f2937;
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .admin-subtitle {
+    color: #6b7280;
+    font-size: 1rem;
+    margin: 0;
+  }
+  
+  .admin-login-form {
+    margin-bottom: 2rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .form-help {
+    display: block;
+    margin-top: 0.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+  
+  .btn-login {
+    width: 100%;
+    padding: 0.875rem;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  .admin-navigation {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .admin-navigation .btn {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .admin-info {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  
+  .info-title {
+    color: #1e40af;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .info-content p {
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+  }
+  
+  .concept-list, .security-list {
+    margin: 0.5rem 0 1rem 1rem;
+    color: #4b5563;
+  }
+  
+  .concept-list li, .security-list li {
+    margin-bottom: 0.25rem;
+  }
+  
+  @media (max-width: 640px) {
+    .admin-login-container {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+    
+    .admin-navigation {
+      flex-direction: column;
+    }
+    
+    .admin-navigation .btn {
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>
