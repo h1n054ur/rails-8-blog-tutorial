@@ -28,6 +28,9 @@ Rails.application.routes.draw do
   # BEGINNER TIP: The root route is special - it handles requests to "/" and ""
   # This is different from other routes which need explicit paths like "/about"
   root 'home#index'
+  
+  # Test route for flash messages (temporary)
+  get '/test-flash', to: 'home#test_flash'
 
   # BLOG ROUTES - Public blog section for viewing published posts
   #

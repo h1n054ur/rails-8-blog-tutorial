@@ -27,6 +27,13 @@ class HomeController < ApplicationController
     # but this is where we would set variables like:
     # @featured_posts = Post.featured.limit(3)
   end
+  
+  # Test action for flash messages - temporary for testing flash functionality
+  def test_flash
+    flash[:notice] = "This is a test notice message. Click the × to close it manually, or wait 5 seconds for auto-dismiss."
+    flash[:alert] = "This is a test alert message. It auto-dismisses after 7 seconds, or click × to close immediately."
+    redirect_to root_path
+  end
 end
 
 # WHAT THIS CONTROLLER DOES:

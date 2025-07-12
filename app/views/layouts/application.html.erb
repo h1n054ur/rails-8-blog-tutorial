@@ -84,17 +84,34 @@
     </header>
 
     <%# FLASH MESSAGES: User feedback for actions (success, error, notice) %>
+    <%# Using Stimulus controller for reliable Turbo-compatible functionality %>
     <% if notice %>
-      <div class="flash flash-notice" role="alert">
-        <%= notice %>
-        <button type="button" class="flash-close" aria-label="Close">&times;</button>
+      <div class="flash flash-notice" 
+           role="alert"
+           data-controller="flash"
+           data-flash-auto-dismiss-value="true"
+           data-flash-dismiss-after-value="5000">
+        <span data-flash-target="message"><%= notice %></span>
+        <button type="button" 
+                class="flash-close" 
+                aria-label="Close"
+                data-action="click->flash#close"
+                data-flash-target="closeButton">&times;</button>
       </div>
     <% end %>
     
     <% if alert %>
-      <div class="flash flash-alert" role="alert">
-        <%= alert %>
-        <button type="button" class="flash-close" aria-label="Close">&times;</button>
+      <div class="flash flash-alert" 
+           role="alert"
+           data-controller="flash"
+           data-flash-auto-dismiss-value="true"
+           data-flash-dismiss-after-value="7000">
+        <span data-flash-target="message"><%= alert %></span>
+        <button type="button" 
+                class="flash-close" 
+                aria-label="Close"
+                data-action="click->flash#close"
+                data-flash-target="closeButton">&times;</button>
       </div>
     <% end %>
 
@@ -139,31 +156,6 @@
       </div>
     </footer>
 
-    <%# FLASH MESSAGE CLOSE FUNCTIONALITY %>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // Add click event listeners to all flash close buttons
-        document.querySelectorAll('.flash-close').forEach(function(closeButton) {
-          closeButton.addEventListener('click', function() {
-            // Find the parent flash message and hide it
-            const flashMessage = this.closest('.flash');
-            if (flashMessage) {
-              flashMessage.style.display = 'none';
-            }
-          });
-        });
-        
-        // Auto-hide flash messages after 5 seconds (optional)
-        document.querySelectorAll('.flash').forEach(function(flashMessage) {
-          setTimeout(function() {
-            flashMessage.style.opacity = '0';
-            setTimeout(function() {
-              flashMessage.style.display = 'none';
-            }, 300);
-          }, 5000);
-        });
-      });
-    </script>
   </body>
 </html>
 
