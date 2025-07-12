@@ -51,60 +51,56 @@ Rails.application.routes.draw do
   # - Parameter capture with :id
   # - Named route helpers for cleaner code
   get '/blog', to: 'blog#index', as: 'blog'
-  get '/blog/:id', to: 'blog#show', as: 'blog_post'
+  get '/blog/:slug', to: 'blog#show', as: 'blog_post'
   
   # ROUTE HELPER EXAMPLES: These routes create these helpers:
   # - blog_path → "/blog" (for linking to blog index)
-  # - blog_post_path(123) → "/blog/123" (for linking to specific post)
+  # - blog_post_path("my-post-slug") → "/blog/my-post-slug" (for linking to specific post)
   # - blog_url → "http://domain.com/blog" (full URL version)
+  # 
+  # SLUG ROUTING: Updated to use slug parameter instead of numeric ID
+  # SEO BENEFIT: URLs like /blog/my-awesome-post instead of /blog/123
+  # PARAMETER: :slug captures the post's slug for lookup
   #
-  # ADMIN AUTHENTICATION ROUTES - Secure admin panel access
-  #
-  # WHAT THESE ROUTES DO: Handle admin user login/logout workflow
-  # - GET /admin/login → admin/sessions#new (display login form)  
-  # - POST /admin/login → admin/sessions#create (process login)
-  # - DELETE /admin/logout → admin/sessions#destroy (logout user)
-  #
-  # ROUTING DESIGN DECISIONS:
-  # 1. NAMESPACE: All admin routes under /admin/ for clear separation
-  # 2. SESSIONS: Login/logout is session management, not user management
-  # 3. RESTful PATTERN: new/create/destroy actions follow Rails conventions
-  # 4. SECURITY: Admin routes separate from public interface
-  #
-  # RAILS CONCEPTS DEMONSTRATED:
-  # - Custom routes for authentication workflow
-  # - Descriptive URL patterns (/admin/login vs /sessions/new)
-  # - Named route helpers for clean controllers and views
-  # - HTTP method mapping (GET for forms, POST for submission, DELETE for logout)
-  #
-  # BEGINNER EXPLANATION:
-  # - GET requests are for displaying pages (login form)
-  # - POST requests are for submitting data (login credentials)
-  # - DELETE requests are for removing something (user session)
-  # - 'as:' creates helper methods for generating these URLs
-  #
-  # ROUTE HELPERS CREATED:
-  # - admin_login_path → "/admin/login" (GET - show login form)
-  # - admin_login_path → "/admin/login" (POST - process login)
-  # - admin_logout_path → "/admin/logout" (DELETE - logout user)
-  get '/admin/login', to: 'admin/sessions#new', as: 'admin_login'
-  post '/admin/login', to: 'admin/sessions#create'
-  delete '/admin/logout', to: 'admin/sessions#destroy', as: 'admin_logout'
   
-  # ADMIN DASHBOARD ROUTE - Main admin interface
+  # ADMIN NAMESPACE: All admin functionality grouped under /admin path
   #
-  # WHAT THIS ROUTE DOES: Provides main admin panel interface
-  # - GET /admin → admin/dashboard#index (admin overview page)
-  #
-  # DESIGN DECISION: Simple admin root rather than complex nested routes
-  # This creates a clear entry point for admin functionality
-  #
-  # FUTURE EXPANSION: In Phase 4, we'll add:
-  # namespace :admin do
-  #   resources :posts  # Full CRUD for blog posts
-  #   root 'dashboard#index'  # Could use this syntax instead
-  # end
-  get '/admin', to: 'admin/dashboard#index', as: 'admin_dashboard'
+  # NAMESPACE BENEFITS:
+  # - Clean URL structure (/admin/login, /admin/posts, etc.)
+  # - Separate admin controllers from public controllers
+  # - Admin-specific layout and authentication can be applied consistently
+  # - Clear separation of concerns between public and admin interfaces
+  namespace :admin do
+    # AUTHENTICATION ROUTES: Login and logout functionality
+    get 'login', to: 'sessions#new'      # Display login form
+    post 'login', to: 'sessions#create'  # Process login submission
+    delete 'logout', to: 'sessions#destroy'  # Process logout
+    
+    # POSTS RESOURCE: RESTful routes for blog post management
+    #
+    # RAILS RESOURCE MAGIC: `resources :posts` automatically creates:
+    # GET    /admin/posts           → posts#index   (list all posts)
+    # GET    /admin/posts/new       → posts#new     (show form for new post)
+    # POST   /admin/posts           → posts#create  (process new post form)
+    # GET    /admin/posts/:id       → posts#show    (display specific post)
+    # GET    /admin/posts/:id/edit  → posts#edit    (show form for editing)
+    # PATCH  /admin/posts/:id       → posts#update  (process edit form)
+    # DELETE /admin/posts/:id       → posts#destroy (delete post)
+    #
+    # MEMBER ROUTES: Custom actions that operate on individual posts
+    # - member: adds routes that include the post ID
+    # - patch: HTTP verb for modifying existing resources
+    resources :posts do
+      member do
+        patch :publish    # PATCH /admin/posts/:id/publish
+        patch :unpublish  # PATCH /admin/posts/:id/unpublish
+      end
+    end
+    
+    # ADMIN ROOT: Dashboard as the admin home page
+    # When admin visits /admin, they see the dashboard
+    root 'dashboard#index'
+  end
   
   # WHY CUSTOM ROUTES HERE: 
   # - Clear, readable URLs that match user expectations

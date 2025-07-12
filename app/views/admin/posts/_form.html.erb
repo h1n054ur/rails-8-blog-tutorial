@@ -1,0 +1,798 @@
+<!-- Reusable Post Form Partial -->
+<!-- Usage: render 'form', post: @post, form_title: "Create New Post" -->
+
+<%= form_with model: [:admin, post], local: true, class: "post-form" do |form| %>
+  <!-- Error Messages Display -->
+  <% if post.errors.any? %>
+    <div class="error-container">
+      <div class="error-header">
+        <h4><%= pluralize(post.errors.count, "error") %> prevented this post from being saved:</h4>
+      </div>
+      <ul class="error-list">
+        <% post.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-container">
+    <!-- Post Title Field -->
+    <div class="form-group">
+      <%= form.label :title, class: "form-label" do %>
+        Post Title <span class="required">*</span>
+      <% end %>
+      <%= form.text_field :title, 
+            class: "form-control #{'is-invalid' if post.errors[:title].any?}",
+            placeholder: "Enter a compelling title for your post",
+            maxlength: 200 %>
+      <% if post.errors[:title].any? %>
+        <div class="invalid-feedback">
+          <%= post.errors[:title].first %>
+        </div>
+      <% end %>
+      <small class="form-text">Maximum 200 characters</small>
+    </div>
+
+    <!-- Post Slug Field -->
+    <div class="form-group">
+      <%= form.label :slug, class: "form-label" do %>
+        URL Slug <span class="required">*</span>
+        <span class="optional-hint">(Used in the post URL)</span>
+      <% end %>
+      <%= form.text_field :slug, 
+            class: "form-control #{'is-invalid' if post.errors[:slug].any?}",
+            placeholder: "my-awesome-blog-post",
+            pattern: "[a-z0-9-]+",
+            title: "Only lowercase letters, numbers, and hyphens allowed" %>
+      <% if post.errors[:slug].any? %>
+        <div class="invalid-feedback">
+          <%= post.errors[:slug].first %>
+        </div>
+      <% end %>
+      <small class="form-text">
+        <strong>URL Preview:</strong> <%= request.base_url %>/blog/<span id="slug-preview"><%= post.slug.present? ? post.slug : "your-slug-here" %></span><br>
+        Only lowercase letters, numbers, and hyphens. Must be unique across all posts.
+        <button type="button" id="generate-slug-btn" class="btn-link" onclick="generateSlugFromCurrentTitle()">Generate from title</button>
+      </small>
+    </div>
+
+    <!-- Post Excerpt Field -->
+    <div class="form-group">
+      <%= form.label :excerpt, class: "form-label" do %>
+        Excerpt
+        <span class="optional-hint">(Optional - used for previews)</span>
+      <% end %>
+      <%= form.text_area :excerpt, 
+            class: "form-control #{'is-invalid' if post.errors[:excerpt].any?}",
+            placeholder: "Write a brief summary of your post (optional)",
+            rows: 3,
+            maxlength: 500 %>
+      <% if post.errors[:excerpt].any? %>
+        <div class="invalid-feedback">
+          <%= post.errors[:excerpt].first %>
+        </div>
+      <% end %>
+      <small class="form-text">Maximum 500 characters. If left blank, will auto-generate from content.</small>
+    </div>
+
+    <!-- Post Content Field -->
+    <div class="form-group">
+      <%= form.label :content, class: "form-label" do %>
+        Content <span class="required">*</span>
+      <% end %>
+      <%= form.text_area :content, 
+            class: "form-control #{'is-invalid' if post.errors[:content].any?}",
+            placeholder: "Write your blog post content here...",
+            rows: 15 %>
+      <% if post.errors[:content].any? %>
+        <div class="invalid-feedback">
+          <%= post.errors[:content].first %>
+        </div>
+      <% end %>
+      <small class="form-text">Use plain text or basic HTML. Support for rich text editors coming in future phases.</small>
+    </div>
+
+    <!-- Post Images Field -->
+    <div class="form-group">
+      <%= form.label :images, class: "form-label" do %>
+        Images
+        <span class="optional-hint">(Optional - add images to your post)</span>
+      <% end %>
+      
+      <!-- Image Upload Interface -->
+      <div class="image-upload-container">
+        <div class="upload-area" id="image-upload-area">
+          <div class="upload-prompt">
+            <span class="upload-icon">📷</span>
+            <p>Click to upload images or drag and drop</p>
+            <small>Supports: JPG, PNG, GIF, WebP</small>
+          </div>
+          <input type="file" id="image-upload-input" multiple accept="image/*" style="display: none;">
+        </div>
+        
+        <!-- Image Preview Container -->
+        <div class="image-previews" id="image-previews">
+          <!-- Existing images will be displayed here -->
+          <% if post.has_images? %>
+            <% post.images.each_with_index do |image, index| %>
+              <div class="image-preview" data-index="<%= index %>">
+                <img src="<%= image['src'] %>" alt="<%= image['alt'] %>" class="preview-image">
+                <div class="image-controls">
+                  <input type="text" placeholder="Alt text" value="<%= image['alt'] %>" class="image-alt">
+                  <input type="text" placeholder="Caption" value="<%= image['caption'] %>" class="image-caption">
+                  <select class="image-position">
+                    <option value="hero" <%= 'selected' if image['position'] == 'hero' %>>Hero Image</option>
+                    <option value="index-1" <%= 'selected' if image['position'] == 'index-1' %>>Index 1</option>
+                    <option value="index-2" <%= 'selected' if image['position'] == 'index-2' %>>Index 2</option>
+                    <option value="index-3" <%= 'selected' if image['position'] == 'index-3' %>>Index 3</option>
+                  </select>
+                  <button type="button" class="btn-remove-image" onclick="removeImage(<%= index %>)">×</button>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        
+        <!-- Hidden field to store image data -->
+        <input type="hidden" name="post[images]" id="images-data" value="<%= html_escape(post.images.to_json) %>">
+      </div>
+      
+      <small class="form-text">Images will be embedded in your post. Use the position controls to adjust placement.</small>
+    </div>
+
+    <!-- Publishing Options -->
+    <div class="form-group">
+      <fieldset class="publishing-options">
+        <legend class="form-label">Publishing Options</legend>
+        
+        <div class="publishing-controls">
+          <div class="form-check">
+            <%= form.check_box :published, 
+                  class: "form-check-input",
+                  id: "post_published" %>
+            <%= form.label :published, 
+                  "Publish immediately", 
+                  class: "form-check-label" %>
+          </div>
+          
+          <small class="form-text">
+            <strong>Publish immediately:</strong> Makes this post visible to visitors on the blog.<br>
+            <strong>Leave unchecked:</strong> Saves as draft for later publication.
+          </small>
+        </div>
+      </fieldset>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <div class="primary-actions">
+        <%= form.submit class: "btn btn-primary btn-lg" %>
+        
+        <!-- Save as Draft button (only show for new posts) -->
+        <% if post.new_record? %>
+          <%= form.submit "Save as Draft", 
+                name: "save_as_draft", 
+                class: "btn btn-outline-secondary btn-lg" %>
+        <% end %>
+        
+        <!-- Delete button for existing posts when editing -->
+        <% if defined?(show_delete) && show_delete && !post.new_record? %>
+          <%= link_to "Delete Post", admin_post_path(post), 
+                method: :delete,
+                class: "btn btn-danger btn-lg",
+                data: { 
+                  confirm: "Are you sure you want to delete '#{post.title}'? This action cannot be undone.",
+                  turbo_method: :delete 
+                } %>
+        <% end %>
+      </div>
+      
+      <div class="secondary-actions">
+        <%= link_to "Cancel", admin_posts_path, 
+              class: "btn btn-outline-light btn-lg" %>
+              
+        <!-- Preview button for existing posts -->
+        <% unless post.new_record? %>
+          <%= link_to "Preview", admin_post_path(post), 
+                class: "btn btn-outline-info btn-lg",
+                target: "_blank" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<style>
+/* Post Form Styles */
+.post-form {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  border: 1px solid #e5e5e5;
+}
+
+.form-group {
+  margin-bottom: 2rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.required {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.optional-hint {
+  font-weight: normal;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.form-control.is-invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.invalid-feedback {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.form-text {
+  color: #6c757d;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Publishing Options */
+.publishing-options {
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  padding: 1.5rem;
+  margin: 0;
+}
+
+.publishing-options legend {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  padding: 0 0.5rem;
+  margin-bottom: 1rem;
+  width: auto;
+}
+
+.publishing-controls {
+  margin-bottom: 0;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.form-check-input {
+  margin-right: 0.75rem;
+  margin-top: 0;
+  transform: scale(1.2);
+}
+
+.form-check-label {
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e5e5;
+}
+
+.primary-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.secondary-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.btn-lg {
+  padding: 0.875rem 2rem;
+  font-size: 1.1rem;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.btn-outline-secondary {
+  color: #6c757d;
+  border-color: #6c757d;
+  background-color: transparent;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-outline-light {
+  color: #333;
+  border-color: #ccc;
+  background-color: transparent;
+}
+
+.btn-outline-light:hover {
+  background-color: #f8f9fa;
+  border-color: #bbb;
+}
+
+.btn-outline-info {
+  color: #17a2b8;
+  border-color: #17a2b8;
+  background-color: transparent;
+}
+
+.btn-outline-info:hover {
+  background-color: #17a2b8;
+  color: white;
+}
+
+/* Error Container */
+.error-container {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.error-header h4 {
+  color: #721c24;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+}
+
+.error-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #721c24;
+}
+
+.error-list li {
+  margin-bottom: 0.5rem;
+}
+
+/* Slug Field Specific Styles */
+.btn-link {
+  background: none;
+  border: none;
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0;
+  margin-left: 0.5rem;
+}
+
+.btn-link:hover {
+  color: #0056b3;
+}
+
+#slug-preview {
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Image Upload Styles */
+.image-upload-container {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #f8f9fa;
+}
+
+.upload-area {
+  border: 2px dashed #007bff;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+  margin-bottom: 1rem;
+}
+
+.upload-area:hover {
+  border-color: #0056b3;
+  background: #f0f8ff;
+}
+
+.upload-area.dragover {
+  border-color: #28a745;
+  background: #f0fff0;
+}
+
+.upload-prompt .upload-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.upload-prompt p {
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+  color: #333;
+}
+
+.upload-prompt small {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.image-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.image-preview {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 1rem;
+  background: white;
+  position: relative;
+}
+
+.preview-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.image-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.image-alt,
+.image-caption {
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.image-position {
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  background: white;
+}
+
+.btn-remove-image {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-remove-image:hover {
+  background: #c82333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .primary-actions,
+  .secondary-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn-lg {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>
+
+<script>
+// Function to convert title to slug
+function generateSlugFromTitle(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+    .replace(/\s+/g, '-')         // Replace spaces with hyphens
+    .replace(/-+/g, '-')          // Replace multiple hyphens with single hyphen
+    .replace(/^-+|-+$/g, '');     // Remove leading/trailing hyphens
+}
+
+// Global function for the button onclick
+function generateSlugFromCurrentTitle() {
+  const titleField = document.querySelector('#post_title');
+  const slugField = document.querySelector('#post_slug');
+  const slugPreview = document.querySelector('#slug-preview');
+  
+  if (titleField && slugField) {
+    const title = titleField.value.trim();
+    
+    if (title) {
+      const generatedSlug = generateSlugFromTitle(title);
+      slugField.value = generatedSlug;
+      
+      // Update preview
+      if (slugPreview) {
+        slugPreview.textContent = generatedSlug || 'your-slug-here';
+      }
+      
+      // Trigger change event to validate
+      slugField.dispatchEvent(new Event('input', { bubbles: true }));
+    } else {
+      alert('Please enter a title first');
+    }
+  }
+}
+
+// Slug Generation JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+  const titleField = document.querySelector('#post_title');
+  const slugField = document.querySelector('#post_slug');
+  const slugPreview = document.querySelector('#slug-preview');
+  
+  // Update slug preview when slug field changes
+  if (slugField && slugPreview) {
+    slugField.addEventListener('input', function() {
+      const slugValue = this.value || 'your-slug-here';
+      slugPreview.textContent = slugValue;
+    });
+  }
+  
+  // Auto-generate slug when title changes (only for new posts with empty slug)
+  if (titleField && slugField) {
+    titleField.addEventListener('blur', function() {
+      // Only auto-generate if slug is empty (for new posts)
+      if (!slugField.value.trim()) {
+        const title = this.value.trim();
+        if (title) {
+          const generatedSlug = generateSlugFromTitle(title);
+          slugField.value = generatedSlug;
+          
+          // Update preview
+          if (slugPreview) {
+            slugPreview.textContent = generatedSlug || 'your-slug-here';
+          }
+        }
+      }
+    });
+  }
+  
+  // Initialize image upload functionality
+  initializeImageUpload();
+});
+
+// Image Upload Functionality
+let imageData = [];
+
+function initializeImageUpload() {
+  const uploadArea = document.getElementById('image-upload-area');
+  const uploadInput = document.getElementById('image-upload-input');
+  const imagesDataField = document.getElementById('images-data');
+  
+  // Load existing images
+  if (imagesDataField && imagesDataField.value) {
+    try {
+      imageData = JSON.parse(imagesDataField.value);
+      // Refresh previews to show existing images
+      refreshImagePreviews();
+    } catch (e) {
+      imageData = [];
+    }
+  }
+  
+  // Click to upload
+  if (uploadArea && uploadInput) {
+    uploadArea.addEventListener('click', function() {
+      uploadInput.click();
+    });
+    
+    // File selection
+    uploadInput.addEventListener('change', function(e) {
+      handleFileSelect(e.target.files);
+    });
+    
+    // Drag and drop
+    uploadArea.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      handleFileSelect(e.dataTransfer.files);
+    });
+  }
+  
+  // Update image data when controls change
+  document.addEventListener('input', function(e) {
+    if (e.target.matches('.image-alt, .image-caption, .image-position')) {
+      updateImageData();
+    }
+  });
+}
+
+function handleFileSelect(files) {
+  for (let file of files) {
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const imageObject = {
+          src: e.target.result,
+          alt: '',
+          caption: '',
+          position: 'hero'
+        };
+        imageData.push(imageObject);
+        addImagePreview(imageObject, imageData.length - 1);
+        updateImagesField();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+}
+
+function addImagePreview(image, index) {
+  const previewContainer = document.getElementById('image-previews');
+  const previewDiv = document.createElement('div');
+  previewDiv.className = 'image-preview';
+  previewDiv.setAttribute('data-index', index);
+  
+  previewDiv.innerHTML = `
+    <img src="${image.src}" alt="${image.alt}" class="preview-image">
+    <div class="image-controls">
+      <input type="text" placeholder="Alt text" value="${image.alt}" class="image-alt">
+      <input type="text" placeholder="Caption" value="${image.caption}" class="image-caption">
+      <select class="image-position">
+        <option value="hero" ${image.position === 'hero' ? 'selected' : ''}>Hero Image</option>
+        <option value="index-1" ${image.position === 'index-1' ? 'selected' : ''}>Index 1</option>
+        <option value="index-2" ${image.position === 'index-2' ? 'selected' : ''}>Index 2</option>
+        <option value="index-3" ${image.position === 'index-3' ? 'selected' : ''}>Index 3</option>
+      </select>
+      <button type="button" class="btn-remove-image" onclick="removeImage(${index})">×</button>
+    </div>
+  `;
+  
+  previewContainer.appendChild(previewDiv);
+}
+
+function removeImage(index) {
+  imageData.splice(index, 1);
+  refreshImagePreviews();
+  updateImagesField();
+}
+
+function updateImageData() {
+  const previews = document.querySelectorAll('.image-preview');
+  previews.forEach((preview, index) => {
+    const alt = preview.querySelector('.image-alt').value;
+    const caption = preview.querySelector('.image-caption').value;
+    const position = preview.querySelector('.image-position').value;
+    
+    if (imageData[index]) {
+      imageData[index].alt = alt;
+      imageData[index].caption = caption;
+      imageData[index].position = position;
+    }
+  });
+  updateImagesField();
+}
+
+function refreshImagePreviews() {
+  const previewContainer = document.getElementById('image-previews');
+  previewContainer.innerHTML = '';
+  
+  imageData.forEach((image, index) => {
+    addImagePreview(image, index);
+  });
+}
+
+function updateImagesField() {
+  const imagesDataField = document.getElementById('images-data');
+  if (imagesDataField) {
+    imagesDataField.value = JSON.stringify(imageData);
+  }
+}
+</script>

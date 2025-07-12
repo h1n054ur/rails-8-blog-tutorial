@@ -58,6 +58,19 @@ class User < ApplicationRecord
   # BENEFIT: Prevents duplicate accounts with different email casing
   before_save :normalize_email
   
+  # ASSOCIATIONS: Relationships with other models
+  #
+  # USER-POST RELATIONSHIP: One user can write many blog posts
+  # - has_many: Creates posts method on user instances (user.posts)
+  # - dependent: :destroy: When user is deleted, also delete their posts
+  # - This complements the belongs_to :user in the Post model
+  #
+  # RELATIONSHIP EXPLANATION for beginners:
+  # - A user (author) can write multiple blog posts
+  # - If we delete a user, we also delete all their posts (data consistency)
+  # - Rails handles the foreign key relationship automatically
+  has_many :posts, dependent: :destroy
+  
   # SCOPES - Convenient query methods for common user searches
   #
   # Scopes provide reusable query logic that can be chained with other queries

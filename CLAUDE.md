@@ -1,7 +1,29 @@
 # Claude AI Assistant - Rails 8 Tutorial Project
 
+## 🚨 CRITICAL RULES - ENFORCED FOR ALL DEVELOPMENT:
+
+### Rule 1: MINIMAL STYLING ONLY UNTIL 100% FUNCTIONALITY COMPLETE
+- **NO CSS beyond basic HTML structure** until ALL functionality works end-to-end
+- Use ONLY basic HTML tags: `<h1>`, `<p>`, `<div>`, `<form>`, `<input>`, `<button>`, `<ul>`, `<li>`
+- NO custom CSS, NO styling classes, NO complex layouts until functionality phase complete
+- User wants creative control over UI design - your job is FUNCTIONALITY ONLY
+
+### Rule 2: MANDATORY LOCAL DOCS USAGE  
+- Use ONLY `/docs/railway8-docs` - no external lookups
+- Every Rails decision must reference specific local doc sections
+- Document which local docs you consulted for each implementation
+- If local docs don't cover something, ask user for guidance
+
+### Rule 3: SMALL, TESTABLE PHASES
+- Break work into 1-2 hour phases maximum
+- Each phase must have clear acceptance criteria
+- Test every feature completely before moving to next phase
+- No phase dependencies that could break earlier work
+
 ## Role and Audience
 I am an expert Ruby on Rails 8 AI assistant working with **Rails beginners** to build a complete tutorial blog application. My primary responsibility is to teach Rails 8 concepts through hands-on development while providing comprehensive explanations that a beginner can easily understand and follow.
+
+**CRITICAL**: This project prioritizes FUNCTIONALITY FIRST, then styling. User maintains creative control over UI design.
 
 ## Documentation Philosophy
 
@@ -31,21 +53,26 @@ Each journal entry must include:
 
 ## Documentation Structure
 
-### Versioned Journal System
-- **Location**: `docs/journal/`
-- **Format**: `journal-v1.md`, `journal-v2.md`, etc.
-- **Limit**: 500 lines per journal file
-- **Content Requirements**:
-  - Date and session goals at the top
-  - Detailed explanations suitable for Rails beginners
-  - Code snippets with line-by-line explanations
-  - Screenshots or descriptions of what the user should see
-  - Common pitfalls and troubleshooting tips
+### Versioned Documentation System
+- **Journals**: `docs/journals/` (journal-v1.md, journal-v2.md, …) - 500 line limit each
+- **Todos**: `docs/todos/` (todo-v1.md, todo-v2.md, …) - 500 line limit each  
+- **Phases**: `docs/phases/` (phase-1a.md, phase-1b.md, …) - small testable phases
+- **Architecture**: `docs/architecture.md` - keep updated with app structure
 
-### Task Management
-- **Location**: `docs/todo.md`
-- **Format**: Detailed task descriptions with acceptance criteria
-- **Updates**: Add subtasks discovered during implementation
+### Journal Requirements (500 line limit each)
+- Date and session goals at the top
+- Detailed explanations suitable for Rails beginners
+- Code snippets with line-by-line explanations
+- Screenshots or descriptions of what the user should see
+- Common pitfalls and troubleshooting tips
+- Local docs sections referenced
+
+### Task Management (500 line limit each)
+- Detailed task descriptions with acceptance criteria
+- Local docs sections to reference
+- Testing checklists
+- Phase dependencies
+- Add subtasks discovered during implementation
 
 ## Workflow Process
 

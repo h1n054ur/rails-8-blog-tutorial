@@ -1,0 +1,561 @@
+<% content_for :title, "Preview: #{@post.title}" %>
+
+<div class="admin-header">
+  <div class="admin-header-content">
+    <h1>Post Preview</h1>
+    <p class="admin-subtitle">How this post will appear to visitors</p>
+  </div>
+  
+  <div class="admin-actions">
+    <%= link_to "← Back to Posts", admin_posts_path, class: "breadcrumb-link" %>
+    <%= link_to "Edit Post", edit_admin_post_path(@post), class: "btn btn-primary" %>
+  </div>
+</div>
+
+<div class="admin-content">
+  <!-- Post Status Banner -->
+  <div class="status-banner <%= @post.published? ? 'status-published' : 'status-draft' %>">
+    <div class="status-content">
+      <% if @post.published? %>
+        <strong>✓ Published Post</strong>
+        <span>This post is live and visible to all visitors</span>
+        <% if @post.published_at.present? %>
+          <small>Published on <%= @post.published_at.strftime("%B %d, %Y at %I:%M %p") %></small>
+        <% end %>
+      <% else %>
+        <strong>📝 Draft Post</strong>
+        <span>This post is saved as a draft and not visible to visitors</span>
+      <% end %>
+    </div>
+    
+    <div class="status-actions">
+      <% if @post.published? %>
+        <%= link_to "Unpublish", unpublish_admin_post_path(@post), 
+              method: :patch,
+              class: "btn btn-sm btn-warning",
+              data: { 
+                confirm: "Are you sure you want to unpublish this post?",
+                turbo_method: :patch 
+              } %>
+      <% else %>
+        <%= link_to "Publish Now", publish_admin_post_path(@post), 
+              method: :patch,
+              class: "btn btn-sm btn-success",
+              data: { turbo_method: :patch } %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Post Preview Container -->
+  <div class="post-preview">
+    <!-- Post Header -->
+    <article class="post-article">
+      <header class="post-header">
+        <h1 class="post-title"><%= @post.title %></h1>
+        
+        <div class="post-meta">
+          <div class="post-author">
+            <strong>By <%= @post.author_name %></strong>
+          </div>
+          
+          <div class="post-dates">
+            <time class="post-date">
+              <% if @post.published? && @post.published_at.present? %>
+                Published <%= @post.published_at.strftime("%B %d, %Y") %>
+              <% else %>
+                Created <%= @post.created_at.strftime("%B %d, %Y") %>
+              <% end %>
+            </time>
+            
+            <% if @post.updated_at > @post.created_at + 1.hour %>
+              <time class="post-updated">
+                Updated <%= @post.updated_at.strftime("%B %d, %Y") %>
+              </time>
+            <% end %>
+          </div>
+        </div>
+      </header>
+
+      <!-- Hero Image Section -->
+      <% if @post.has_hero_image? %>
+        <div class="hero-image-section">
+          <% hero = @post.hero_image %>
+          <img src="<%= hero['src'] %>" 
+               alt="<%= hero['alt'] %>" 
+               class="hero-image">
+          <% if hero['caption'].present? %>
+            <div class="hero-caption">
+              <%= simple_format(hero['caption']) %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Post Excerpt (if provided) -->
+      <% if @post.excerpt.present? %>
+        <div class="post-excerpt">
+          <p class="excerpt-text"><%= simple_format(@post.excerpt) %></p>
+        </div>
+      <% end %>
+
+      <!-- Post Content with indexed images -->
+      <div class="post-content">
+        <% if @post.indexed_images.any? %>
+          <!-- Split content into paragraphs and intersperse with indexed images -->
+          <% paragraphs = @post.content.split(/\r?\n\r?\n/) %>
+          
+          <% paragraphs.each_with_index do |paragraph, index| %>
+            <% unless paragraph.strip.empty? %>
+              <%= simple_format(paragraph) %>
+            <% end %>
+            
+            <!-- Insert indexed image after specific paragraph positions -->
+            <% image_index = index + 1 %>
+            <% if indexed_image = @post.get_image_by_index(image_index) %>
+              <div class="indexed-image-section" data-index="<%= image_index %>">
+                <img src="<%= indexed_image['src'] %>" 
+                     alt="<%= indexed_image['alt'] %>" 
+                     class="indexed-image">
+                <% if indexed_image['caption'].present? %>
+                  <div class="indexed-image-caption">
+                    <%= simple_format(indexed_image['caption']) %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        <% else %>
+          <!-- No indexed images, display content normally -->
+          <%= simple_format(@post.content) %>
+        <% end %>
+      </div>
+    </article>
+  </div>
+
+  <!-- Post Management Actions -->
+  <div class="post-actions">
+    <div class="primary-actions">
+      <%= link_to "Edit Post", edit_admin_post_path(@post), class: "btn btn-primary" %>
+      
+      <% if @post.published? %>
+        <%= link_to "View on Blog", blog_post_path(@post), class: "btn btn-outline-info", target: "_blank" %>
+      <% end %>
+    </div>
+    
+    <div class="secondary-actions">
+      <%= link_to "All Posts", admin_posts_path, class: "btn btn-outline-secondary" %>
+      
+      <%= link_to "Delete Post", admin_post_path(@post), 
+            method: :delete,
+            class: "btn btn-outline-danger",
+            data: { 
+              confirm: "Are you absolutely sure you want to delete '#{@post.title}'? This action cannot be undone.",
+              turbo_method: :delete 
+            } %>
+    </div>
+  </div>
+</div>
+
+<style>
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.admin-header-content h1 {
+  margin: 0;
+  color: #333;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.admin-subtitle {
+  margin: 0.5rem 0 0 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.breadcrumb-link {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Status Banner */
+.status-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.status-published {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.status-draft {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+}
+
+.status-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.status-content strong {
+  font-size: 1.1rem;
+}
+
+.status-content span {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.status-content small {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* Post Preview */
+.post-preview {
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 3rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.post-article {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.post-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.post-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #333;
+  margin: 0 0 1rem 0;
+}
+
+.post-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  color: #666;
+}
+
+.post-author {
+  font-size: 1rem;
+}
+
+.post-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.post-updated {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Hero Image Styles */
+.hero-image-section {
+  position: relative;
+  margin: 0 0 2rem 0;
+  background: #f8fafc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.hero-image {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-caption {
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 1rem 1.5rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.hero-caption p {
+  margin: 0;
+  color: white;
+}
+
+/* Indexed Image Styles */
+.indexed-image-section {
+  margin: 2rem 0;
+  text-align: center;
+  background: #f8fafc;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.indexed-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.indexed-image-caption {
+  padding: 1rem;
+  background: white;
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  font-style: italic;
+  border-top: 1px solid #f3f4f6;
+}
+
+.indexed-image-caption p {
+  margin: 0;
+  color: #6b7280;
+}
+
+/* Post Excerpt */
+.post-excerpt {
+  background: #f8f9fa;
+  border-left: 4px solid #007bff;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 0 4px 4px 0;
+}
+
+.excerpt-text {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #555;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Post Content */
+.post-content {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #333;
+}
+
+.post-content p {
+  margin-bottom: 1.5rem;
+}
+
+.post-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Post Actions */
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e5e5;
+}
+
+.primary-actions,
+.secondary-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #1e7e34;
+  border-color: #1e7e34;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #333;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+  border-color: #e0a800;
+}
+
+.btn-outline-info {
+  color: #17a2b8;
+  border-color: #17a2b8;
+  background-color: transparent;
+}
+
+.btn-outline-info:hover {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-outline-secondary {
+  color: #6c757d;
+  border-color: #6c757d;
+  background-color: transparent;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-outline-danger {
+  color: #dc3545;
+  border-color: #dc3545;
+  background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .admin-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .status-banner {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .post-preview {
+    padding: 2rem 1.5rem;
+  }
+  
+  .post-title {
+    font-size: 2rem;
+  }
+  
+  .post-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .post-dates {
+    text-align: left;
+  }
+
+  .hero-image {
+    height: 250px;
+  }
+
+  .hero-caption {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .indexed-image-section {
+    margin: 1.5rem 0;
+  }
+
+  .indexed-image-caption {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+  
+  .post-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .primary-actions,
+  .secondary-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+</style>

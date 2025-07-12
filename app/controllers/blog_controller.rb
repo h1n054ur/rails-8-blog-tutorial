@@ -20,16 +20,21 @@ class BlogController < ApplicationController
   # CURRENT STATE: Placeholder implementation for Phase 2 structure
   # FUTURE ENHANCEMENT: Will query published blog posts from database
   def index
-    # PLACEHOLDER: In Phase 3, this will become:
-    # @posts = Post.published.recent.includes(:user)
+    # PHASE 4 IMPLEMENTATION: Query published blog posts from database
+    # Using published scope to only show public posts, not drafts
+    @posts = Post.published.recent.includes(:user)
     
-    # For now, we'll set up placeholder data for the view
-    # This demonstrates how instance variables pass data to views
+    # Set up SEO-friendly page metadata for better user experience
     @page_title = "Blog Posts"
     @page_description = "Explore our Rails 8 tutorial blog posts covering modern web development topics."
     
     # BEGINNER NOTE: Instance variables (starting with @) are automatically
     # available in the view template. Local variables would not be accessible.
+    #
+    # QUERY OPTIMIZATION: 
+    # - .published scope filters to only published posts
+    # - .recent scope orders by newest first for better UX
+    # - .includes(:user) prevents N+1 queries when displaying author names
     
     # RAILS MAGIC: Rails will automatically render app/views/blog/index.html.erb
     # unless we explicitly call render with different options
@@ -40,22 +45,30 @@ class BlogController < ApplicationController
   # RAILS CONVENTION: 'show' is the standard action for displaying a single
   # resource identified by an ID parameter.
   #
-  # URL PATTERN: This will handle URLs like /blog/123 where 123 is the post ID
+  # URL PATTERN: This will handle URLs like /blog/my-awesome-post where my-awesome-post is the slug
   def show
-    # PLACEHOLDER: In Phase 3, this will become:
-    # @post = Post.published.find(params[:id])
-    # @comment = Comment.new  # For future comment functionality
+    # SLUG IMPLEMENTATION: Find and display a single published blog post using slug
+    @post = Post.published.includes(:user).find_by_slug!(params[:slug])
     
-    # For Phase 2, we'll create a placeholder response
-    @page_title = "Blog Post"
-    @post_id = params[:id]  # Demonstrates how URL parameters are accessed
+    # Set up SEO-friendly page metadata using post data
+    @page_title = @post.title
+    @page_description = @post.excerpt_or_content.truncate(160)
     
-    # LEARNING POINT: params[:id] contains the ID from the URL
-    # Rails automatically extracts this from routes like /blog/:id
+    # LEARNING POINT: params[:slug] contains the slug from the URL
+    # Rails automatically extracts this from routes like /blog/:slug
+    #
+    # SECURITY NOTE: Using Post.published.find_by_slug! ensures users can only
+    # access published posts, not drafts or unpublished content
+    #
+    # SEO BENEFIT: Slug-based URLs are more descriptive and search-engine friendly
+    # Example: /blog/rails-8-tutorial instead of /blog/123
+    #
+    # QUERY OPTIMIZATION: .includes(:user) prevents N+1 queries when
+    # displaying author information
     
-    # FUTURE ERROR HANDLING: In Phase 3, we'll add:
-    # rescue ActiveRecord::RecordNotFound
-    #   redirect_to blog_index_path, alert: 'Post not found'
+  rescue ActiveRecord::RecordNotFound
+    # Handle case where post doesn't exist or isn't published
+    redirect_to blog_path, alert: 'Blog post not found or no longer available.'
   end
 
   # PRIVATE METHODS: Helper methods that support the controller actions

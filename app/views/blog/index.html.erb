@@ -10,54 +10,82 @@
   </section>
 
   <section class="blog-posts">
-    <div class="posts-coming-soon">
-      <div class="placeholder-card">
-        <h2>📝 Blog Posts Coming Soon!</h2>
-        <p>
-          We're currently in <strong>Phase 3</strong> of development, building the admin authentication system.
-          Blog posts will be available in <strong>Phase 4</strong> when we add:
-        </p>
-        
-        <ul class="feature-list">
-          <li>📊 Post database model</li>
-          <li>✍️ Admin post creation interface</li>
-          <li>🎯 Published/draft status management</li>
-          <li>🔍 Post listing and individual post views</li>
-          <li>📱 Mobile-responsive post layout</li>
-        </ul>
-        
-        <div class="development-status">
-          <h3>Development Progress</h3>
-          <div class="progress-list">
-            <div class="progress-item completed">
-              <span class="status">✅</span>
-              <span class="phase">Phase 1:</span>
-              <span class="description">Documentation Framework</span>
+    <% if @posts.any? %>
+      <!-- Display published blog posts -->
+      <div class="posts-grid">
+        <% @posts.each do |post| %>
+          <article class="post-card">
+            <div class="post-header">
+              <h2 class="post-title">
+                <%= link_to post.title, blog_post_path(post), class: "post-link" %>
+              </h2>
+              
+              <div class="post-meta">
+                <span class="author">By <%= post.author_name %></span>
+                <span class="separator">•</span>
+                <time class="publish-date" datetime="<%= post.published_at&.iso8601 || post.created_at.iso8601 %>">
+                  <%= (post.published_at || post.created_at).strftime("%B %d, %Y") %>
+                </time>
+              </div>
             </div>
-            <div class="progress-item completed">
-              <span class="status">✅</span>
-              <span class="phase">Phase 2:</span>
-              <span class="description">Public Interface</span>
+            
+            <div class="post-content">
+              <% if post.excerpt.present? %>
+                <p class="post-excerpt"><%= post.excerpt %></p>
+              <% else %>
+                <p class="post-excerpt"><%= truncate(post.content, length: 200, separator: ' ') %></p>
+              <% end %>
             </div>
-            <div class="progress-item completed">
-              <span class="status">✅</span>
-              <span class="phase">Phase 3:</span>
-              <span class="description">Admin Authentication</span>
+            
+            <div class="post-footer">
+              <%= link_to "Read More", blog_post_path(post), class: "read-more-btn" %>
             </div>
-            <div class="progress-item pending">
-              <span class="status">🚧</span>
-              <span class="phase">Phase 4:</span>
-              <span class="description">Blog Post Management (Next)</span>
-            </div>
-            <div class="progress-item pending">
-              <span class="status">⏳</span>
-              <span class="phase">Phase 5:</span>
-              <span class="description">Tutorial Documentation</span>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <!-- Empty state when no posts are published -->
+      <div class="empty-state">
+        <div class="empty-state-card">
+          <h2>📝 No Blog Posts Yet</h2>
+          <p>
+            We haven't published any blog posts yet, but great content is coming soon!
+            Check back later for tutorials, insights, and updates about Rails 8 development.
+          </p>
+          
+          <div class="development-status">
+            <h3>Development Progress</h3>
+            <div class="progress-list">
+              <div class="progress-item completed">
+                <span class="status">✅</span>
+                <span class="phase">Phase 1:</span>
+                <span class="description">Documentation Framework</span>
+              </div>
+              <div class="progress-item completed">
+                <span class="status">✅</span>
+                <span class="phase">Phase 2:</span>
+                <span class="description">Public Interface</span>
+              </div>
+              <div class="progress-item completed">
+                <span class="status">✅</span>
+                <span class="phase">Phase 3:</span>
+                <span class="description">Admin Authentication</span>
+              </div>
+              <div class="progress-item completed">
+                <span class="status">✅</span>
+                <span class="phase">Phase 4:</span>
+                <span class="description">Blog Post Management</span>
+              </div>
+              <div class="progress-item pending">
+                <span class="status">⏳</span>
+                <span class="phase">Phase 5:</span>
+                <span class="description">Tutorial Documentation</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    <% end %>
   </section>
 
   <section class="tutorial-info">
@@ -120,11 +148,100 @@
     margin: 0;
   }
 
-  .posts-coming-soon {
+  /* Published Posts Grid */
+  .posts-grid {
+    display: grid;
+    gap: 2rem;
     margin-bottom: 3rem;
   }
 
-  .placeholder-card {
+  .post-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .post-header {
+    margin-bottom: 1rem;
+  }
+
+  .post-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .post-link {
+    color: #1f2937;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .post-link:hover {
+    color: #3b82f6;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .author {
+    font-weight: 500;
+  }
+
+  .separator {
+    color: #d1d5db;
+  }
+
+  .post-content {
+    margin-bottom: 1.5rem;
+  }
+
+  .post-excerpt {
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .post-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .read-more-btn {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #3b82f6;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .read-more-btn:hover {
+    background-color: #3b82f6;
+    color: white;
+  }
+
+  /* Empty State */
+  .empty-state {
+    margin-bottom: 3rem;
+  }
+
+  .empty-state-card {
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
@@ -132,7 +249,7 @@
     text-align: center;
   }
 
-  .placeholder-card h2 {
+  .empty-state-card h2 {
     color: #1f2937;
     font-size: 1.5rem;
     margin-bottom: 1rem;

@@ -22,10 +22,9 @@ class Admin::SessionsController < ApplicationController
     # No instance variables needed since this is just displaying a form
     
     # REDIRECT LOGIC: If user is already logged in, redirect to avoid confusion
-    user = User.find_by(id: session[:user_id]) if session[:user_id]
-    if user&.admin?
+    if current_user&.admin?
       # FLASH MESSAGE: Inform user they're already authenticated
-      redirect_to admin_dashboard_path, notice: 'You are already logged in'
+      redirect_to admin_root_path, notice: 'You are already logged in'
       return
     end
     
@@ -69,8 +68,8 @@ class Admin::SessionsController < ApplicationController
       flash[:notice] = "Welcome back, #{user.email}!"
       
       # REDIRECT: Send to admin dashboard
-      # SECURITY: admin_dashboard_path will be protected by authorization
-      redirect_to admin_dashboard_path
+      # SECURITY: admin_root_path will be protected by authorization
+      redirect_to admin_root_path
     else
       # FAILURE PATH: Invalid credentials or non-admin user
       

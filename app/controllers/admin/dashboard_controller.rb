@@ -33,15 +33,15 @@ class Admin::DashboardController < Admin::BaseController
     @total_users = User.count
     @admin_users = User.admin.count
     
-    # PLACEHOLDER DATA: Phase 3 completion status
-    # EDUCATIONAL: Shows what Phase 4 will add with real data
-    @total_posts = 0  # Will be Post.count in Phase 4
-    @published_posts = 0  # Will be Post.published.count in Phase 4
-    @draft_posts = 0  # Will be Post.draft.count in Phase 4
+    # PHASE 4 COMPLETION: Real blog post statistics
+    # POST STATISTICS: Calculate actual post counts from database
+    @total_posts = Post.count  # Total posts in database
+    @published_posts = Post.published.count  # Published posts visible to public
+    @draft_posts = Post.where(published: false).count  # Draft posts not yet published
     
     # DASHBOARD STATUS: Track tutorial progress
-    @tutorial_phase = "Phase 3: Admin Authentication"
-    @next_phase = "Phase 4: Blog Post Management"
+    @tutorial_phase = "Phase 4: Blog Post Management"
+    @next_phase = "Phase 5: Tutorial Documentation"
     
     # RAILS CONCEPT: Instance variables set here are automatically available
     # in the view template. Rails "magic" makes @variable available as variable in ERB.
